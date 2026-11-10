@@ -285,14 +285,14 @@ function quiz(el,makeList,intro){
 }
 </script>
 <script>
-const SHEETS={w10:[
- ['Rounding: decimal places','Lesson 36','S2_Rounding-decimal-places_L36.pdf',''],
- ['Significant figures, precision and accuracy','Lesson 37','S2_Significant-figures_L37.pdf','S2_Significant-figures_answers_L37.pdf']],
- w11:[
- ['HCF and LCM recap','Lesson 39 · self-study','S2_HCF-LCM-recap_L39.pdf','S2_HCF-LCM-recap_answers_L39.pdf'],
- ['Equivalent fractions','Lesson 39','S2_Equivalent-fractions_L39.pdf','S2_Equivalent-fractions_answers_L39.pdf'],
- ['Adding and subtracting fractions','Lesson 40','S2_Add-subtract-fractions_L40.pdf','S2_Add-subtract-fractions_answers_L40.pdf']]};
-$('#w10').innerHTML=Object.values(SHEETS).flat().sort((a,b)=>a[0].localeCompare(b[0])).map(([t,s,id,ans])=>`<div class="sheet"><div class="ico">PDF</div><div class="name"><b>${t}</b></div><div class="acts"><a class="btn ghost" href="sheets/${id}" target="_blank" rel="noopener">Sheet</a>${ans?`<a class="btn amber" href="sheets/${ans}" target="_blank" rel="noopener">Answers</a>`:''}</div></div>`).join('');
+const SHEETS=[
+ [10,'Rounding: decimal places','S2_Rounding-decimal-places_L36.pdf',''],
+ [10,'Significant figures, precision and accuracy','S2_Significant-figures_L37.pdf','S2_Significant-figures_answers_L37.pdf'],
+ [10,'HCF and LCM recap','S2_HCF-LCM-recap_L39.pdf','S2_HCF-LCM-recap_answers_L39.pdf'],
+ [10,'Equivalent fractions','S2_Equivalent-fractions_L39.pdf','S2_Equivalent-fractions_answers_L39.pdf'],
+ [11,'Adding and subtracting fractions','S2_Add-subtract-fractions_L40.pdf','S2_Add-subtract-fractions_answers_L40.pdf']];
+const weeks=[...new Set(SHEETS.map(x=>x[0]))].sort((a,b)=>b-a);
+$('#w10').innerHTML=weeks.map(w=>`<h3>Week ${w}</h3>`+SHEETS.filter(x=>x[0]===w).sort((a,b)=>a[1].localeCompare(b[1])).map(([,t,id,ans])=>`<div class="sheet"><div class="ico">PDF</div><div class="name"><b>${t}</b></div><div class="acts"><a class="btn ghost" href="sheets/${id}" target="_blank" rel="noopener">Sheet</a>${ans?`<a class="btn amber" href="sheets/${ans}" target="_blank" rel="noopener">Answers</a>`:''}</div></div>`).join('')).join('');
 
 /* ---------- rounding ---------- */
 const decStr=(k,e)=>{let s=String(k);if(e>=0)return s+'0'.repeat(e);const d=-e;s=s.padStart(d+1,'0');return s.slice(0,s.length-d)+'.'+s.slice(s.length-d)};
