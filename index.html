@@ -160,6 +160,88 @@ footer{text-align:center;font-size:.8rem;color:var(--mute);padding:10px 16px 30p
 .pz .cuts button.on{background:#ea580c;color:#fff;border-color:#ea580c}
 .pz .serve{background:#16a34a;box-shadow:0 3px 0 #166534}
 
+.bpstage{background:linear-gradient(170deg,#0c4a6e,#1e1b4b)}
+.bprule{font-size:.72rem;opacity:.8;font-weight:600}
+.bptimer{height:6px;background:rgba(255,255,255,.12)}
+.bptimer i{display:block;height:100%;width:100%;background:#38bdf8}
+.bptimer i.hot{background:#ef4444}
+.blane{position:relative;height:444px;padding:6px 8px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.blane::after{content:'';position:absolute;left:0;right:0;bottom:0;height:5px;background:#ef4444;opacity:.7}
+.brow{flex:0 0 64px;display:flex;align-items:center;justify-content:center;gap:5px;background:rgba(255,255,255,.1);border-radius:16px;padding:0 6px;font-weight:700;font-size:1.25rem;white-space:nowrap;touch-action:manipulation}
+.brow.in{animation:bdrop .35s ease-out}
+.brow.danger{background:rgba(239,68,68,.3)}
+.brow.clear{background:rgba(34,197,94,.35);animation:bclear .45s forwards}
+.bnum.new{display:inline-block;color:#fde047;animation:bnew .35s}
+.bpar{opacity:.85;font-size:1.4rem}
+.bop{width:42px;height:42px;flex:0 0 42px;border-radius:50%;border:0;font:inherit;font-size:1.6rem;font-weight:800;color:#fff;cursor:pointer;padding:0;line-height:1;box-shadow:inset -4px -5px 8px rgba(0,0,0,.22),inset 4px 4px 7px rgba(255,255,255,.45);transition:transform .1s}
+.bop:active{transform:scale(.85)}
+.bop.pw{width:30px;height:30px;flex-basis:30px;font-size:1.05rem;align-self:flex-start;margin:6px 0 0 -3px}
+.bop.c0{background:#ec4899}.bop.c1{background:#f59e0b}.bop.c2{background:#10b981}.bop.c3{background:#3b82f6}.bop.c4{background:#a855f7}
+.bop.bad{background:#ef4444;animation:shake .3s}
+@keyframes bdrop{from{transform:translateY(-70px);opacity:0}to{transform:none;opacity:1}}
+@keyframes bclear{60%{transform:scale(1.06);opacity:1}to{transform:scale(.6);opacity:0}}
+@keyframes bnew{from{transform:scale(1.7)}to{transform:scale(1)}}
+@media(max-width:420px){.brow{font-size:1.05rem;gap:3px}.bop{width:34px;height:34px;flex-basis:34px;font-size:1.1rem}.bop.pw{width:26px;height:26px;flex-basis:26px}}
+
+.bpfloor{height:70px;background:linear-gradient(#1e1b4b,#312e81)}
+.axo{position:absolute;right:12px;bottom:2px;width:84px;z-index:11;pointer-events:none}
+.axo svg{display:block;width:100%;animation:axbob 2.4s ease-in-out infinite}
+.axo .f{display:none}
+.axo[data-mood=happy] .f-happy,.axo[data-mood=worry] .f-worry,.axo[data-mood=cheer] .f-cheer{display:inline}
+.axo .gl,.axo .eyes{transform-box:fill-box}
+.axo .gll{transform-origin:100% 50%;animation:axgl 2.4s ease-in-out infinite}
+.axo .glr{transform-origin:0 50%;animation:axgr 2.4s ease-in-out infinite}
+.axo .eyes{transform-origin:50% 50%;animation:axblink 4.2s infinite}
+.axo[data-mood=worry] svg{animation:axtremble .22s linear infinite}
+.axo[data-mood=cheer] svg{animation:axjump .5s ease-out 4}
+.axo.no svg{animation:shake .22s 2}
+.axb{position:absolute;right:66px;bottom:58px;width:18px;height:18px;border-radius:50%;border:2px solid #7dd3fc;background:rgba(125,211,252,.25);z-index:9;pointer-events:none;animation:axrise 1.6s ease-out forwards}
+@keyframes axbob{50%{transform:translateY(-4px)}}
+@keyframes axgl{50%{transform:rotate(7deg)}}
+@keyframes axgr{50%{transform:rotate(-7deg)}}
+@keyframes axblink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+@keyframes axtremble{25%{transform:translateX(-2px)}75%{transform:translateX(2px)}}
+@keyframes axjump{50%{transform:translateY(-22px)}}
+@keyframes axrise{to{transform:translate(-26px,-190px) scale(1.8);opacity:0}}
+@media(prefers-reduced-motion:reduce){.axo svg,.axo .gl,.axo .eyes{animation:none}}
+
+.lane{touch-action:none}
+.fastb{position:absolute;left:10px;bottom:14px;background:#22d3ee;color:#083344;font-weight:800;font-size:.85rem;padding:3px 10px;border-radius:99px;z-index:4;opacity:0;transform:scale(.6);transition:.15s;pointer-events:none}
+.stage.fast .fastb{opacity:1;transform:none}
+.stage.fast .lane{animation:lanefast .25s linear infinite;box-shadow:inset 0 0 0 3px #22d3ee}
+@keyframes lanefast{to{background-position:0 39px}}
+.tip{display:flex;align-items:center;gap:12px;text-align:left;font-size:.9rem;line-height:1.35;background:linear-gradient(120deg,rgba(34,211,238,.22),rgba(167,139,250,.28));border:1.5px solid rgba(165,243,252,.6);border-radius:16px;padding:10px 14px;max-width:340px;animation:tipin .5s .2s both,tipglow 2s 1s ease-in-out infinite}
+.tip b{color:#a5f3fc}
+.tipf{position:relative;flex:0 0 46px;height:46px;display:grid;place-items:center}
+.tipf em{font-style:normal;font-size:1.7rem;animation:tippress 1.6s ease-in-out infinite;position:relative}
+.tipf i{position:absolute;inset:8px;border-radius:50%;border:2px solid #67e8f9;animation:tipring 1.6s ease-out infinite}
+.tipf i+i{animation-delay:.35s}
+.tipgo{display:inline-block;animation:tipgo .7s linear infinite}
+@keyframes tipin{from{opacity:0;transform:translateY(14px) scale(.9)}to{opacity:1;transform:none}}
+@keyframes tipglow{50%{box-shadow:0 0 18px rgba(103,232,249,.55)}}
+@keyframes tippress{0%,100%{transform:translateY(-5px)}30%,70%{transform:translateY(3px) scale(.92)}}
+@keyframes tipring{0%,25%{transform:scale(.4);opacity:0}35%{opacity:.9}100%{transform:scale(1.7);opacity:0}}
+@keyframes tipgo{0%{transform:translateX(-3px);opacity:.5}100%{transform:translateX(4px);opacity:1}}
+
+.slstage{background:linear-gradient(180deg,#fffbeb,#fde68a)}
+.slsvg{display:block;width:100%;max-width:520px;margin:0 auto}
+.slknife{transition:none}
+.slpanel{padding:10px 14px 16px;text-align:center;min-height:210px}
+.slask{margin:.4rem 0 .6rem;font-size:1rem}
+.slcut{font-size:1.25rem;padding:14px 34px;background:#dc2626;color:#fff;box-shadow:0 4px 0 #991b1b}
+.slcut:active{transform:translateY(3px);box-shadow:0 1px 0 #991b1b}
+.slcal{display:flex;gap:6px;justify-content:center}
+.slcal div{background:#1f2937;border-radius:10px;padding:6px 6px;flex:0 1 100px;box-shadow:inset 0 0 0 2px #4b5563}
+.slcal span{display:block;font-size:.7rem;color:#d1d5db;text-transform:uppercase;letter-spacing:.04em}
+.slcal b{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:1.3rem;color:#a7f3d0;letter-spacing:.03em}
+.slcal i{font-style:normal;font-size:.7rem;color:#9ca3af;margin-left:3px}
+.slform{display:flex;gap:8px;justify-content:center;align-items:center}
+.slform input{font:inherit;font-size:1.2rem;font-weight:700;width:110px;padding:8px 10px;border-radius:10px;border:2px solid #b45309;text-align:center;background:#fff;color:#1f2937}
+.slfb{margin-top:8px;font-size:.95rem}
+.slok,.slno{border-radius:10px;padding:6px 10px;display:inline-block}
+.slok{background:#dcfce7;color:#14532d}.slno{background:#fee2e2;color:#7f1d1d}
+.slrate{margin:6px 0 8px;font-weight:600}
+
 .ctrl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:.6rem 0 .2rem}
 .step{display:inline-flex;align-items:center;border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
 .step button{font:inherit;border:0;background:var(--tealbg);color:var(--teal);width:34px;height:34px;font-size:1.1rem;cursor:pointer;font-weight:700}
@@ -522,7 +604,60 @@ function pizzaShop(root,key){
   return()=>{run=false;stop&&stop()};
 }
 
+/* ================= THE PERFECT SLICE ================= */
+const SL_LEVELS=[
+ {name:'Deviation to 1 decimal place',dp:2,kind:'dp',n:1},
+ {name:'Deviation to 2 decimal places',dp:3,kind:'dp',n:2},
+ {name:'Deviation to 1 significant figure',dp:3,kind:'sf',n:1},
+ {name:'Deviation to 2 significant figures',dp:3,kind:'sf',n:2},
+ {name:'Mean thickness to 1 decimal place',dp:1,kind:'mean',n:1}];
+const slLevel=n=>n<=5?SL_LEVELS[n-1]:{...pick(SL_LEVELS),name:'Master baker: mixed'};
+const slFix=(k,dp)=>(k/10**dp).toFixed(dp);
+/* tilt in [-1,1] -> three caliper readings as whole numbers of 10^-dp mm, plus the question */
+function slMake(L,tilt){const u=10**L.dp,base=rnd(9*u,14*u);let spread=Math.round((Math.abs(tilt)*1.5+rnd(2,7)/100)*u);if(spread<1)spread=1;if(L.kind==='mean'&&spread<2)spread=2;
+  const s=tilt<0?1:-1,top=base+s*Math.ceil(spread/2),bot=base-s*Math.floor(spread/2);let mid=base+rnd(-Math.floor(spread/3),Math.floor(spread/3));if(mid===top||mid===bot)mid=base;
+  const r=[top,mid,bot],hi=Math.max(...r),lo=Math.min(...r),D=hi-lo;let ans,ask,work;
+  if(L.kind==='mean'){const sum=top+mid+bot;ans=Math.round(sum/3)/u;ask=`Find the <b>mean</b> thickness, to 1 decimal place.`;work=`(${r.map(x=>slFix(x,L.dp)).join(' + ')}) ÷ 3 = ${slFix(sum,L.dp)} ÷ 3 = ${sum%3?(sum/3/u).toFixed(3)+'…':slFix(sum/3,L.dp)} → <b>${ans.toFixed(1)}</b>`}
+  else{let R,txt;if(L.kind==='dp'){const f=10**(L.dp-L.n);R=Math.round(D/f)*f;txt=slFix(R,L.dp).slice(0,-(L.dp-L.n));ask=`Find the <b>deviation</b> (thickest − thinnest), to ${L.n} decimal place${L.n>1?'s':''}.`}
+    else{const dg=String(D).length,f=10**Math.max(0,dg-L.n);R=Math.round(D/f)*f;const keep=Math.max(0,L.dp-Math.max(0,String(R).length-L.n));txt=(R/u).toFixed(keep);ask=`Find the <b>deviation</b> (thickest − thinnest), to ${L.n} significant figure${L.n>1?'s':''}.`}
+    ans=R/u;work=`${slFix(hi,L.dp)} − ${slFix(lo,L.dp)} = ${slFix(D,L.dp)} → <b>${txt}</b>`}
+  const dev=D/u;return{r,dp:L.dp,dev,ans,ask,work,rating:dev<.1?10:Math.max(1,Math.round(10-dev*6))}}
+function perfectSlice(root,key){
+  const PER=4;
+  root.innerHTML=`<div class="stage light slstage"><div class="hud"><span class="lvl lv"></span><span class="slpass"></span><span class="pts"></span></div>
+   <svg class="slsvg" viewBox="0 0 360 190" role="img" aria-label="A loaf of bread and a knife"><rect x="0" y="150" width="360" height="40" fill="#b08968"/><rect x="0" y="150" width="360" height="5" fill="#9c6b45"/>
+    <path d="M40 150 V105 Q40 70 80 70 H240 Q262 70 262 100 V150 Z" fill="#c68642"/><path d="M48 150 V108 Q48 80 82 80 H238 Q254 80 254 102 V150 Z" fill="#e0a45c"/>
+    <g stroke="#b3712e" stroke-width="4" stroke-linecap="round"><line x1="85" y1="76" x2="100" y2="92"/><line x1="125" y1="76" x2="140" y2="92"/><line x1="165" y1="76" x2="180" y2="92"/><line x1="205" y1="76" x2="220" y2="92"/></g>
+    <line x1="232" y1="40" x2="232" y2="150" stroke="#7c2d12" stroke-width="1.5" stroke-dasharray="4 4" opacity=".5"/>
+    <g class="slslice"></g>
+    <g class="slknife"><rect x="-3" y="-78" width="6" height="34" rx="3" fill="#3f3f46"/><path d="M-2.5 -46 H2.5 V50 Q0 58 -2.5 50 Z" fill="#d4d4d8" stroke="#71717a" stroke-width="1"/></g></svg>
+   <div class="slpanel"></div></div>`;
+  const stage=$('.stage',root),panel=$('.slpanel',root),knife=$('.slknife',root),sliceG=$('.slslice',root);let score,level,L,n,right,t,tilt,state='idle',stop=null,gold;
+  const hud=()=>{$('.pts',root).textContent=`⭐ ${score}`;$('.lv',root).textContent=`Level ${level} · slice ${Math.min(n+1,PER)}/${PER}`;$('.slpass',root).textContent='🍞'.repeat(right)};
+  const setKnife=a=>knife.setAttribute('transform',`translate(232,92) rotate(${a.toFixed(2)})`);
+  function tick(dt){if(state!=='aim')return;t+=dt;const w=1.5+Math.min(level,8)*.3;tilt=Math.sin(w*t)*.7+Math.sin(2.3*w*t+1)*.3;setKnife(tilt*14)}
+  function aim(){state='aim';t=Math.random()*6;sliceG.innerHTML='';panel.innerHTML=`<p class="slask">Cut when the knife is <b>straight</b>!</p><button type="button" class="btn slcut">🔪 Cut!</button>`;$('.slcut',panel).onclick=cut;hud()}
+  function cut(){if(state!=='aim')return;state='measure';const q=slMake(L,tilt);const k=Math.max(-1,Math.min(1,tilt))*9;
+    sliceG.innerHTML=`<path d="M${232+k} 74 L262 74 Q268 74 268 100 V150 H${232-k} Z" fill="#f3d19c" stroke="#c68642" stroke-width="3" transform="translate(34,0)"/>`;setKnife(tilt*14);
+    const lab=['Top','Middle','Bottom'];
+    panel.innerHTML=`<div class="slcal">${q.r.map((x,i)=>`<div><span>${lab[i]}</span><b>${slFix(x,q.dp)}</b><i>mm</i></div>`).join('')}</div><p class="slask">${q.ask}</p>
+      <form class="slform"><input inputmode="decimal" autocomplete="off" aria-label="Your answer" placeholder="?"><span>mm</span><button class="btn" type="submit">Check</button></form><div class="slfb"></div>`;
+    const inp=$('input',panel),fb=$('.slfb',panel);inp.focus({preventScroll:true});
+    $('form',panel).onsubmit=e=>{e.preventDefault();if(state!=='measure')return;const v=parseNum(inp.value);if(v===null){fb.innerHTML='Type a number, for example 0.4';return}
+      state='done';inp.disabled=true;$('form .btn',panel).disabled=true;const ok=Math.abs(v-q.ans)<1e-9;const pts=ok?q.rating*10*level:0;if(ok){right++;score+=pts}n++;if(q.rating===10)gold++;
+      fb.innerHTML=`<div class="${ok?'slok':'slno'}">${ok?'Correct!':'Not quite.'} ${q.work}</div><div class="slrate">${q.rating===10?'🏆 Golden slice! ':''}Slice rating: <b>${q.rating}/10</b>${ok?` · +${pts} points`:''}</div><button type="button" class="btn slnext">${n>=PER?'Finish loaf':'Next slice'}</button>`;
+      if(ok&&q.rating>=9)toast(stage,q.rating===10?'GOLDEN SLICE! 🏆':'So even! ✨','#b45309');hud();$('.slnext',panel).onclick=()=>n>=PER?loafDone():aim()}}
+  function loafDone(){state='idle';if(right>=3){score+=20*level;hud();overlay(stage,`<div class="emo">🥖</div><h2>Level ${level} done!</h2><p>${right} of ${PER} correct · +${20*level} bonus points</p>`,'Next loaf',()=>{level++;intro()})}
+    else{const b=GK.best(key,score);overlay(stage,`<div class="emo">🍞</div><h2>Bakery closed</h2><p>You needed 3 correct slices and got ${right}.</p><p>You reached <b>level ${level}</b>. Score <b>${score}</b> · Best ${b}</p>${gold?`<p>Golden slices: ${'🏆'.repeat(gold)}</p>`:''}`,'Play again',start)}}
+  function intro(){L=slLevel(level);n=0;right=0;hud();panel.innerHTML='';sliceG.innerHTML='';overlay(stage,`<div class="emo">🔪</div><h2>Level ${level}</h2><p><b>${L.name}</b></p><p>${PER} slices. Get 3 right to pass.</p>`,'Go!',aim)}
+  function start(){score=0;level=1;gold=0;intro()}
+  score=0;level=1;n=0;right=0;gold=0;hud();setKnife(0);stop=loop(tick);
+  overlay(stage,`<div class="emo">🍞</div><h2>The Perfect Slice</h2><p>Cut an even slice, then do the maths on the caliper readings.</p><p>Even slice + right answer = big points!</p>`,'Open the bakery',start);
+  return()=>{state='idle';stop&&stop()};
+}
+
 gameHub($('#gpick'),$('#gpanel'),{
+  ps:{title:'The Perfect Slice',emo:'🍞',desc:'Cut an even slice, then round the caliper readings.',cls:'g-red',run:perfectSlice},
   ff:{title:'Fraction Fill',emo:'🧱',desc:'Drop falling fractions to make exactly 1 whole.',cls:'g-purple',run:fractionFill},
   ld:{title:'Rounding Lander',emo:'🚀',desc:'Land on the right rounded number before the fuel runs out.',cls:'g-night',run:lander},
   pz:{title:'Pizza Shop',emo:'🍕',desc:'Serve fraction orders fast for big tips.',cls:'g-orange',run:pizzaShop}});
