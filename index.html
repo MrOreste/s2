@@ -175,7 +175,7 @@ label.tog{display:inline-flex;gap:8px;align-items:center;font-size:.95rem;cursor
 <main class="wrap">
 
 <section id="sheets" class="view">
-  <div class="banner"><b>Week 11:</b> comparing, adding and subtracting fractions. <b>Fractions Check on Friday 13 November!</b> Get ready in <a href="#test">Test prep</a>.</div>
+  <div class="banner"><b>Week 11:</b> rounding and fractions. <b>Check on Friday 13 November!</b> Get ready in <a href="#test">Test prep</a>.</div>
   <div class="card"><h2>Worksheets</h2><p class="small">Try the sheet first, then check the answers.</p>
     <div id="w10"></div>
   </div>
@@ -196,7 +196,7 @@ label.tog{display:inline-flex;gap:8px;align-items:center;font-size:.95rem;cursor
 </section>
 
 <section id="test" class="view" hidden>
-  <div class="card"><h2>Test prep: fractions</h2><div id="quiz"></div></div>
+  <div class="card"><h2>Test prep: rounding and fractions</h2><div id="quiz"></div></div>
 </section>
 </main>
 <footer>S2 Maths with Mr Oreste</footer>
@@ -394,7 +394,7 @@ chipPanel($('#pchips'),$('#ppanel'),{
  eq:{label:'Equivalent fractions',gen:equiv},si:{label:'Simplifying',gen:simplify},cd:{label:'Lowest common denominator',gen:lcd},
  cp:{label:'Which is bigger?',gen:compare},or:{label:'Ordering',gen:order},as:{label:'Adding and subtracting',gen:addsub()}});
 comparer($('#cmp'));wall($('#wall'));
-quiz($('#quiz'),()=>[simplify,lcd,lcd,compare,compare,order,addsub('+','same'),addsub('+'),addsub('+','other'),addsub('−','mult'),addsub('−','other')],
+quiz($('#quiz'),()=>[rounding,rounding,sigfig,sigfig,simplify,lcd,compare,order,addsub('+'),addsub('+','other'),addsub('−','other')],
  '11 questions, one try each. <b>No calculator!</b>');
 tabs();
 </script><script>const GK={best(k,v){try{const o=+localStorage.getItem('g_'+k)||0;if(v!==undefined&&v>o){localStorage.setItem('g_'+k,v);return v}return Math.max(o,v||0)}catch(e){return v||0}}};
