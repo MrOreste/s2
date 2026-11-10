@@ -242,6 +242,14 @@ footer{text-align:center;font-size:.8rem;color:var(--mute);padding:10px 16px 30p
 .slok{background:#dcfce7;color:#14532d}.slno{background:#fee2e2;color:#7f1d1d}
 .slrate{margin:6px 0 8px;font-weight:600}
 
+.slsvg{touch-action:none;cursor:crosshair;border-radius:0}
+.slknife{pointer-events:none}
+.slpiece{animation:slaway .5s ease-out forwards}
+.slmeas{opacity:0;animation:slfade .3s forwards}
+.slwarn{color:#b91c1c;font-weight:700;margin:.2rem 0}
+@keyframes slaway{to{transform:translateX(26px)}}
+@keyframes slfade{to{opacity:1}}
+
 .ctrl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:.6rem 0 .2rem}
 .step{display:inline-flex;align-items:center;border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
 .step button{font:inherit;border:0;background:var(--tealbg);color:var(--teal);width:34px;height:34px;font-size:1.1rem;cursor:pointer;font-weight:700}
@@ -613,47 +621,59 @@ const SL_LEVELS=[
  {name:'Mean thickness to 1 decimal place',dp:1,kind:'mean',n:1}];
 const slLevel=n=>n<=5?SL_LEVELS[n-1]:{...pick(SL_LEVELS),name:'Master baker: mixed'};
 const slFix=(k,dp)=>(k/10**dp).toFixed(dp);
-/* tilt in [-1,1] -> three caliper readings as whole numbers of 10^-dp mm, plus the question */
-function slMake(L,tilt){const u=10**L.dp,base=rnd(9*u,14*u);let spread=Math.round((Math.abs(tilt)*1.5+rnd(2,7)/100)*u);if(spread<1)spread=1;if(L.kind==='mean'&&spread<2)spread=2;
-  const s=tilt<0?1:-1,top=base+s*Math.ceil(spread/2),bot=base-s*Math.floor(spread/2);let mid=base+rnd(-Math.floor(spread/3),Math.floor(spread/3));if(mid===top||mid===bot)mid=base;
-  const r=[top,mid,bot],hi=Math.max(...r),lo=Math.min(...r),D=hi-lo;let ans,ask,work;
+/* three thicknesses in mm (top, middle, bottom of the cut) -> caliper readings as whole numbers of 10^-dp mm, plus the question */
+function slMake(L,mm){const u=10**L.dp;const r=mm.map(x=>Math.round(x*u));if(r[1]===r[0])r[1]++;while(r[2]===r[0]||r[2]===r[1])r[2]--;
+  const[top,mid,bot]=r,hi=Math.max(...r),lo=Math.min(...r),D=hi-lo;let ans,ask,work;
   if(L.kind==='mean'){const sum=top+mid+bot;ans=Math.round(sum/3)/u;ask=`Find the <b>mean</b> thickness, to 1 decimal place.`;work=`(${r.map(x=>slFix(x,L.dp)).join(' + ')}) ÷ 3 = ${slFix(sum,L.dp)} ÷ 3 = ${sum%3?(sum/3/u).toFixed(3)+'…':slFix(sum/3,L.dp)} → <b>${ans.toFixed(1)}</b>`}
   else{let R,txt;if(L.kind==='dp'){const f=10**(L.dp-L.n);R=Math.round(D/f)*f;txt=slFix(R,L.dp).slice(0,-(L.dp-L.n));ask=`Find the <b>deviation</b> (thickest − thinnest), to ${L.n} decimal place${L.n>1?'s':''}.`}
     else{const dg=String(D).length,f=10**Math.max(0,dg-L.n);R=Math.round(D/f)*f;const keep=Math.max(0,L.dp-Math.max(0,String(R).length-L.n));txt=(R/u).toFixed(keep);ask=`Find the <b>deviation</b> (thickest − thinnest), to ${L.n} significant figure${L.n>1?'s':''}.`}
     ans=R/u;work=`${slFix(hi,L.dp)} − ${slFix(lo,L.dp)} = ${slFix(D,L.dp)} → <b>${txt}</b>`}
   const dev=D/u;return{r,dp:L.dp,dev,ans,ask,work,rating:dev<.1?10:Math.max(1,Math.round(10-dev*6))}}
 function perfectSlice(root,key){
-  const PER=4;
+  const PER=4,X1=290,Y0=60,Y1=170,ZL=246,ZR=277,YS=[75,115,155],MMPX=.45,DEVPX=.15;
   root.innerHTML=`<div class="stage light slstage"><div class="hud"><span class="lvl lv"></span><span class="slpass"></span><span class="pts"></span></div>
-   <svg class="slsvg" viewBox="0 0 360 190" role="img" aria-label="A loaf of bread and a knife"><rect x="0" y="150" width="360" height="40" fill="#b08968"/><rect x="0" y="150" width="360" height="5" fill="#9c6b45"/>
-    <path d="M40 150 V105 Q40 70 80 70 H240 Q262 70 262 100 V150 Z" fill="#c68642"/><path d="M48 150 V108 Q48 80 82 80 H238 Q254 80 254 102 V150 Z" fill="#e0a45c"/>
-    <g stroke="#b3712e" stroke-width="4" stroke-linecap="round"><line x1="85" y1="76" x2="100" y2="92"/><line x1="125" y1="76" x2="140" y2="92"/><line x1="165" y1="76" x2="180" y2="92"/><line x1="205" y1="76" x2="220" y2="92"/></g>
-    <line x1="232" y1="40" x2="232" y2="150" stroke="#7c2d12" stroke-width="1.5" stroke-dasharray="4 4" opacity=".5"/>
-    <g class="slslice"></g>
-    <g class="slknife"><rect x="-3" y="-78" width="6" height="34" rx="3" fill="#3f3f46"/><path d="M-2.5 -46 H2.5 V50 Q0 58 -2.5 50 Z" fill="#d4d4d8" stroke="#71717a" stroke-width="1"/></g></svg>
+   <svg class="slsvg" viewBox="0 0 360 230" role="img" aria-label="A loaf of bread seen from above"><rect width="360" height="230" fill="#c9a27a"/><g stroke="#b88d63" stroke-width="2"><line x1="0" y1="46" x2="360" y2="46"/><line x1="0" y1="120" x2="360" y2="120"/><line x1="0" y1="190" x2="360" y2="190"/></g>
+    <path d="M${X1} ${Y0} H70 Q30 ${Y0} 30 115 Q30 ${Y1} 70 ${Y1} H${X1} Z" fill="#b3712e"/><path d="M${X1} ${Y0+7} H72 Q38 ${Y0+7} 38 115 Q38 ${Y1-7} 72 ${Y1-7} H${X1} Z" fill="#d9954a"/>
+    <g stroke="#f3d19c" stroke-width="5" stroke-linecap="round" opacity=".85"><line x1="80" y1="92" x2="110" y2="138"/><line x1="125" y1="92" x2="155" y2="138"/><line x1="170" y1="92" x2="200" y2="138"/></g>
+    <rect x="${X1-3}" y="${Y0}" width="3" height="${Y1-Y0}" fill="#f3d19c"/>
+    <g class="slguide"></g><g class="slcutg"></g><g class="slknife" visibility="hidden"><path d="M0 0 Q-4 14 -3 60 H3 Q4 14 0 0 Z" fill="#e4e4e7" stroke="#71717a" stroke-width="1"/><rect x="-5" y="60" width="10" height="36" rx="4" fill="#3f3f46"/></g></svg>
    <div class="slpanel"></div></div>`;
-  const stage=$('.stage',root),panel=$('.slpanel',root),knife=$('.slknife',root),sliceG=$('.slslice',root);let score,level,L,n,right,t,tilt,state='idle',stop=null,gold;
+  const stage=$('.stage',root),panel=$('.slpanel',root),svg=$('.slsvg',root),knife=$('.slknife',root),cutG=$('.slcutg',root),guide=$('.slguide',root);let score,level,L,n,right,state='idle',gold,pts=null;
   const hud=()=>{$('.pts',root).textContent=`⭐ ${score}`;$('.lv',root).textContent=`Level ${level} · slice ${Math.min(n+1,PER)}/${PER}`;$('.slpass',root).textContent='🍞'.repeat(right)};
-  const setKnife=a=>knife.setAttribute('transform',`translate(232,92) rotate(${a.toFixed(2)})`);
-  function tick(dt){if(state!=='aim')return;t+=dt;const w=1.5+Math.min(level,8)*.3;tilt=Math.sin(w*t)*.7+Math.sin(2.3*w*t+1)*.3;setKnife(tilt*14)}
-  function aim(){state='aim';t=Math.random()*6;sliceG.innerHTML='';panel.innerHTML=`<p class="slask">Cut when the knife is <b>straight</b>!</p><button type="button" class="btn slcut">🔪 Cut!</button>`;$('.slcut',panel).onclick=cut;hud()}
-  function cut(){if(state!=='aim')return;state='measure';const q=slMake(L,tilt);const k=Math.max(-1,Math.min(1,tilt))*9;
-    sliceG.innerHTML=`<path d="M${232+k} 74 L262 74 Q268 74 268 100 V150 H${232-k} Z" fill="#f3d19c" stroke="#c68642" stroke-width="3" transform="translate(34,0)"/>`;setKnife(tilt*14);
-    const lab=['Top','Middle','Bottom'];
+  const pos=e=>{const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const q=p.matrixTransform(svg.getScreenCTM().inverse());return{x:q.x,y:q.y}};
+  const xAt=y=>{for(let i=1;i<pts.length;i++){const a=pts[i-1],b=pts[i];if(a.y<=y&&b.y>=y&&b.y>a.y)return a.x+(b.x-a.x)*(y-a.y)/(b.y-a.y)}return null};
+  const trail=()=>`<polyline points="${pts.map(p=>p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ')}" fill="none" stroke="#7c4a1e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+  function drawGuide(){const ticks=`<g stroke="#7c2d12" stroke-width="2"><line x1="${ZL}" y1="${Y0-12}" x2="${ZL}" y2="${Y0-3}"/><line x1="${ZR}" y1="${Y0-12}" x2="${ZR}" y2="${Y0-3}"/><line x1="${ZL}" y1="${Y0-12}" x2="${ZR}" y2="${Y0-12}"/></g><text x="${(ZL+ZR)/2}" y="${Y0-18}" text-anchor="middle" font-size="11" font-weight="700" fill="#7c2d12">cut here ↓</text>`;
+    guide.innerHTML=ticks+(level===1?`<line x1="262" y1="${Y0-2}" x2="262" y2="${Y1+2}" stroke="#fff" stroke-width="1.5" stroke-dasharray="5 5" opacity=".8"/>`:'')}
+  function aim(msg){state='aim';pts=null;cutG.innerHTML='';knife.setAttribute('visibility','hidden');drawGuide();panel.innerHTML=`<p class="slask">👆 Drag down through the loaf in <b>one straight stroke</b>.</p>${msg?`<p class="slwarn">${msg}</p>`:''}`;hud()}
+  svg.addEventListener('pointerdown',e=>{if(state!=='aim')return;e.preventDefault();try{svg.setPointerCapture(e.pointerId)}catch(x){}pts=[pos(e)];knife.setAttribute('visibility','visible');move(e)});
+  function move(e){if(state!=='aim'||!pts)return;const p=pos(e),l=pts[pts.length-1];if(Math.hypot(p.x-l.x,p.y-l.y)>=1.5){pts.push(p);if(p.y>Y0&&p.y<Y1&&p.x<X1&&pts.length%3===0)cutG.insertAdjacentHTML('beforeend',`<circle cx="${(p.x+rnd(-7,7)).toFixed(1)}" cy="${(p.y+rnd(-4,4)).toFixed(1)}" r="${rnd(8,16)/10}" fill="#f3d19c"/>`)}
+    let tr=$('.sltrail',cutG);if(!tr){cutG.insertAdjacentHTML('afterbegin','<g class="sltrail"></g>');tr=$('.sltrail',cutG)}tr.innerHTML=trail();knife.setAttribute('transform',`translate(${p.x.toFixed(1)},${p.y.toFixed(1)})`)}
+  svg.addEventListener('pointermove',move);
+  const up=()=>{if(state!=='aim'||!pts)return;knife.setAttribute('visibility','hidden');const xs=YS.map(xAt);const ys=pts.map(p=>p.y);
+    if(Math.min(...ys)>Y0+2||Math.max(...ys)<Y1-2||xs.some(x=>x===null))return aim('Start above the loaf and cut all the way through!');
+    if(pts.some(p=>p.y>Y0&&p.y<Y1&&p.x>=X1-1))return aim('Oops, the knife slipped off the end. Try again!');
+    const mean=X1-(xs[0]+xs[1]+xs[2])/3;if(X1-mean>ZR)return aim('Too thin, that is only a crumb! Cut between the marks.');if(X1-mean<ZL)return aim('Too thick! Cut between the marks.');
+    cut(xs.map(x=>mean*MMPX+((X1-x)-mean)*DEVPX+rnd(-4,4)/1000),xs)};
+  svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',()=>{if(state==='aim'&&pts)aim()});
+  function cut(mm,xs){state='measure';const q=slMake(L,mm);const inside=pts.filter(p=>p.y>=Y0&&p.y<=Y1);const a=xAt(Y0+.01)??inside[0].x,b=xAt(Y1-.01)??inside[inside.length-1].x;
+    const poly=`${a.toFixed(1)},${Y0} ${inside.map(p=>p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ')} ${b.toFixed(1)},${Y1} ${X1},${Y1} ${X1},${Y0}`;
+    cutG.innerHTML=`<polygon points="${poly}" fill="#c9a27a" stroke="#c9a27a" stroke-width="2"/><g class="slpiece"><polygon points="${poly}" fill="#d9954a" stroke="#b3712e" stroke-width="3" stroke-linejoin="round"/>${YS.map((y,i)=>`<g class="slmeas" style="animation-delay:${.35+i*.25}s"><line x1="${xs[i].toFixed(1)}" y1="${y}" x2="${X1}" y2="${y}" stroke="#0f766e" stroke-width="2"/><line x1="${xs[i].toFixed(1)}" y1="${y-6}" x2="${xs[i].toFixed(1)}" y2="${y+6}" stroke="#0f766e" stroke-width="2.5"/><line x1="${X1}" y1="${y-6}" x2="${X1}" y2="${y+6}" stroke="#0f766e" stroke-width="2.5"/></g>`).join('')}</g>`;
+    guide.innerHTML='';const lab=['Top','Middle','Bottom'];
     panel.innerHTML=`<div class="slcal">${q.r.map((x,i)=>`<div><span>${lab[i]}</span><b>${slFix(x,q.dp)}</b><i>mm</i></div>`).join('')}</div><p class="slask">${q.ask}</p>
       <form class="slform"><input inputmode="decimal" autocomplete="off" aria-label="Your answer" placeholder="?"><span>mm</span><button class="btn" type="submit">Check</button></form><div class="slfb"></div>`;
-    const inp=$('input',panel),fb=$('.slfb',panel);inp.focus({preventScroll:true});
+    const inp=$('input',panel),fb=$('.slfb',panel);
     $('form',panel).onsubmit=e=>{e.preventDefault();if(state!=='measure')return;const v=parseNum(inp.value);if(v===null){fb.innerHTML='Type a number, for example 0.4';return}
-      state='done';inp.disabled=true;$('form .btn',panel).disabled=true;const ok=Math.abs(v-q.ans)<1e-9;const pts=ok?q.rating*10*level:0;if(ok){right++;score+=pts}n++;if(q.rating===10)gold++;
-      fb.innerHTML=`<div class="${ok?'slok':'slno'}">${ok?'Correct!':'Not quite.'} ${q.work}</div><div class="slrate">${q.rating===10?'🏆 Golden slice! ':''}Slice rating: <b>${q.rating}/10</b>${ok?` · +${pts} points`:''}</div><button type="button" class="btn slnext">${n>=PER?'Finish loaf':'Next slice'}</button>`;
+      state='done';inp.disabled=true;$('form .btn',panel).disabled=true;const ok=Math.abs(v-q.ans)<1e-9;const p=ok?q.rating*10*level:0;if(ok){right++;score+=p}n++;if(q.rating===10)gold++;
+      fb.innerHTML=`<div class="${ok?'slok':'slno'}">${ok?'Correct!':'Not quite.'} ${q.work}</div><div class="slrate">${q.rating===10?'🏆 Golden slice! ':''}Slice rating: <b>${q.rating}/10</b>${ok?` · +${p} points`:''}</div><button type="button" class="btn slnext">${n>=PER?'Finish loaf':'Next slice'}</button>`;
       if(ok&&q.rating>=9)toast(stage,q.rating===10?'GOLDEN SLICE! 🏆':'So even! ✨','#b45309');hud();$('.slnext',panel).onclick=()=>n>=PER?loafDone():aim()}}
   function loafDone(){state='idle';if(right>=3){score+=20*level;hud();overlay(stage,`<div class="emo">🥖</div><h2>Level ${level} done!</h2><p>${right} of ${PER} correct · +${20*level} bonus points</p>`,'Next loaf',()=>{level++;intro()})}
     else{const b=GK.best(key,score);overlay(stage,`<div class="emo">🍞</div><h2>Bakery closed</h2><p>You needed 3 correct slices and got ${right}.</p><p>You reached <b>level ${level}</b>. Score <b>${score}</b> · Best ${b}</p>${gold?`<p>Golden slices: ${'🏆'.repeat(gold)}</p>`:''}`,'Play again',start)}}
-  function intro(){L=slLevel(level);n=0;right=0;hud();panel.innerHTML='';sliceG.innerHTML='';overlay(stage,`<div class="emo">🔪</div><h2>Level ${level}</h2><p><b>${L.name}</b></p><p>${PER} slices. Get 3 right to pass.</p>`,'Go!',aim)}
+  function intro(){L=slLevel(level);n=0;right=0;hud();panel.innerHTML='';cutG.innerHTML='';drawGuide();overlay(stage,`<div class="emo">🔪</div><h2>Level ${level}</h2><p><b>${L.name}</b></p><p>${PER} slices. Get 3 right to pass.</p>`,'Go!',()=>aim())}
   function start(){score=0;level=1;gold=0;intro()}
-  score=0;level=1;n=0;right=0;gold=0;hud();setKnife(0);stop=loop(tick);
-  overlay(stage,`<div class="emo">🍞</div><h2>The Perfect Slice</h2><p>Cut an even slice, then do the maths on the caliper readings.</p><p>Even slice + right answer = big points!</p>`,'Open the bakery',start);
-  return()=>{state='idle';stop&&stop()};
+  score=0;level=1;n=0;right=0;gold=0;hud();drawGuide();
+  overlay(stage,`<div class="emo">🍞</div><h2>The Perfect Slice</h2><p>Cut an even slice with your finger, then do the maths on the caliper readings.</p><p>Even slice + right answer = big points!</p>`,'Open the bakery',start);
+  return()=>{state='idle'};
 }
 
 gameHub($('#gpick'),$('#gpanel'),{
