@@ -268,6 +268,8 @@ label.tog{display:inline-flex;gap:8px;align-items:center;font-size:.95rem;cursor
 .fj .fjq{text-align:center;padding:10px 14px 0;font-size:1.05rem}
 .fj .fjq .big{font-size:1.25rem}
 .fj .pond svg{display:block;width:100%;max-width:640px;margin:0 auto;touch-action:manipulation}
+.fj .nx{margin-top:8px}
+.fj .nextb{background:#16a34a;box-shadow:0 3px 0 #166534;font-size:1.05rem;padding:10px 24px}
 .fj .fjmsg{text-align:center;min-height:2.8em;padding:2px 14px 14px;font-size:1.1rem;color:var(--ink)}
 </style>
 </head><body>
@@ -747,7 +749,7 @@ function frogJumps(root,key){
     if(ok){landed++;const pts=10*level+Math.ceil(t);score+=pts;toast(stage,`Ribbit! +${pts}`,'#15803d');msg.innerHTML=sum;
       if(landed%5===0&&level<LV.length-1){level++;later(()=>toast(stage,`Level ${level}!${level===3?' No more fraction labels':''}`,'#0e7490'),900,timers)}}
     else{lives--;stage.classList.add('shake');later(()=>stage.classList.remove('shake'),300,timers);msg.innerHTML=(chosen===null?'Too slow! ':'Splash! ')+sum}
-    hud();if(lives<=0)return later(end,2400,timers);later(newQ,ok?2200:4200,timers)}
+    hud();const over=lives<=0;msg.insertAdjacentHTML('beforeend',`<div class="nx"><button type="button" class="btn nextb">${over?'See my score':'Next jump →'}</button></div>`);const nb=$('.nextb',msg);nb.focus({preventScroll:true});nb.onclick=()=>over?end():newQ()}
   function tick(dt){if(!run||busy)return;t-=dt;$('.tbar i',root).style.width=Math.max(0,t/T*100)+'%';if(t<=0){busy=true;chosen=null;jump()}}
   function start(){lives=3;score=0;level=1;landed=0;run=true;hud();newQ();stop&&stop();stop=loop(tick)}
   function end(){run=false;stop&&stop();const b=GK.best(key,score);overlay(stage,`<div class="emo">🐸</div><h2>Game over</h2><p>The frog landed safely <b>${landed}</b> times. Score <b>${score}</b> · Best ${b}</p><p class="small">Tip: 6 jumps of ${fr(3,4)} is 6 × 3 quarters = 18 quarters.</p>`,'Play again',start)}
