@@ -706,7 +706,7 @@ function frogJumps(root,key){
    <div class="fjq" aria-live="polite"></div><div class="pond"></div>
    <div class="fjgo"><button type="button" class="btn jumpb" disabled>🐸 Jump!</button></div><div class="fjmsg" aria-live="polite"></div></div>`;
   const stage=$('.stage',root),pond=$('.pond',root),msg=$('.fjmsg',root),jb=$('.jumpb',root);
-  let lives,score,level,landed,q,t,T,run=false,stop=null,anim=null,busy,timers=[],fx,fy,chosen,hop,cur;
+  let lives,score,level,landed,q,t,T,run=false,stop=null,anim=null,busy,timers=[],fx,fy,chosen,hop,cur,fa=1,sink=null;
   const W=600,H=210,PY=138,X0=30,X1=570;
   const X=k=>X0+(X1-X0)*k/(q.b*q.M);
   const mixed=k=>{const w=Math.floor(k/q.b),r=k%q.b;if(!r)return`<b>${w}</b>`;const[sr,sb]=simp(r,q.b);return`${w?`<b>${w}</b>`:''}${fr(sr,sb)}`};
@@ -720,26 +720,33 @@ function frogJumps(root,key){
     s+=`<rect x="0" y="${PY-22}" width="${W}" height="${H-PY+22}" fill="#38bdf8" opacity=".35"/><path d="M0 ${PY-22} Q150 ${PY-30} 300 ${PY-22} T600 ${PY-22}" fill="none" stroke="#0ea5e9" stroke-width="2" opacity=".5"/>`;
     for(let i=0;i<=q.b*q.M;i++){const x=X(i),whole=i%q.b===0,rx=Math.min(whole?24:19,step*(whole?.5:.42)),ry=rx*.55;
       const isAns=reveal&&i===q.k,isPick=i===chosen,wrongPick=reveal&&isPick&&i!==q.k;
-      const fill=isAns?'#facc15':wrongPick?'#f87171':isPick?'#a3e635':whole?'#15803d':'#4ade80';
-      s+=`<ellipse cx="${x}" cy="${PY}" rx="${rx}" ry="${ry}" fill="${fill}" stroke="${isPick&&!reveal?'#365314':'#14532d'}" stroke-width="${isPick&&!reveal?3:1.5}"/>`;
-      if(rx>9)s+=`<path d="M${x} ${PY} L${x+rx} ${PY-ry*.4} L${x+rx*.85} ${PY+ry*.45}Z" fill="#bae6fd"/>`;
+      const fill=isAns&&!(sink&&sink.done)?'#facc15':wrongPick?'#f87171':isPick?'#a3e635':whole?'#15803d':'#4ade80';
+      const sk=sink&&sink.k===i,op=sk?Math.max(0,1-sink.p*1.4):1,dy=sk?sink.p*14:0;
+      if(sk&&sink.p>0)for(const rr of[1,1.7,2.4]){const R=rx*rr*(0.6+sink.p);s+=`<ellipse cx="${x}" cy="${PY+4}" rx="${R}" ry="${R*.35}" fill="none" stroke="#e0f2fe" stroke-width="2" opacity="${Math.max(0,1-sink.p)*0.9}"/>`}
+      s+=`<g opacity="${op}"><ellipse cx="${x}" cy="${PY+dy}" rx="${rx}" ry="${ry}" fill="${sk?'#4ade80':fill}" stroke="${isPick&&!reveal?'#365314':'#14532d'}" stroke-width="${isPick&&!reveal?3:1.5}"/>`;
+      if(rx>9)s+=`<path d="M${x} ${PY+dy} L${x+rx} ${PY+dy-ry*.4} L${x+rx*.85} ${PY+dy+ry*.45}Z" fill="#bae6fd"/>`;
+      s+='</g>';
+      if(isAns&&sink&&sink.done)s+=`<ellipse cx="${x}" cy="${PY}" rx="${rx+5}" ry="${ry+4}" fill="none" stroke="#facc15" stroke-width="3" stroke-dasharray="5 4"/><text x="${x}" y="${PY-18}" text-anchor="middle" font-size="20" pointer-events="none">💦</text>`;
       if(whole)s+=`<text x="${x}" y="${PY+42}" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a" font-family="Lexend,sans-serif">${i/q.b}</text>`}
     if(!busy&&!reveal&&run){s+=arc(0,'fj-ghost');const x0=X(0),x1=X(q.a);s+=`<text x="${(x0+x1)/2}" y="${PY-14-arcH(x0,x1)-6}" text-anchor="middle" font-size="14" font-weight="700" fill="#0e7490" font-family="Lexend,sans-serif">1 jump</text>`}
     for(let i=0;i<Math.min(hop,q.n);i++){if(i===cur&&!reveal)continue;s+=arc(i,'fj-done');const x0=X(i*q.a),x1=X((i+1)*q.a);
       if(x1-x0>=20)s+=`<text x="${(x0+x1)/2}" y="${PY-16-arcH(x0,x1)}" text-anchor="middle" font-size="12" font-weight="700" fill="#0e7490" font-family="Lexend,sans-serif">${i+1}</text>`}
     if(chosen!=null&&!reveal&&!busy)s+=`<text x="${X(chosen)}" y="${PY-16}" text-anchor="middle" font-size="24" pointer-events="none">🚩</text>`;
-    s+=`<text x="${fx}" y="${fy}" text-anchor="middle" font-size="30" pointer-events="none">🐸</text>`;
+    if(fa>0)s+=`<text x="${fx}" y="${fy}" text-anchor="middle" font-size="30" opacity="${fa}" pointer-events="none">🐸</text>`;
     s+=`<rect class="hit" x="0" y="${PY-60}" width="${W}" height="90" fill="transparent"/>`;
     pond.innerHTML=s+'</svg>';const svg=$('svg',pond);
     $('.hit',svg).onpointerdown=e=>{if(busy||!run)return;e.preventDefault();const r=svg.getBoundingClientRect(),vx=(e.clientX-r.left)*W/r.width;
       chosen=Math.max(1,Math.min(q.b*q.M,Math.round((vx-X0)/step)));jb.disabled=false;draw()}}
-  function newQ(){busy=false;chosen=null;hop=0;cur=-1;makeQ();fx=X(0);fy=PY-6;T=LV[level].T;t=T;jb.disabled=true;jb.hidden=false;
+  function newQ(){busy=false;chosen=null;hop=0;cur=-1;fa=1;sink=null;makeQ();fx=X(0);fy=PY-6;T=LV[level].T;t=T;jb.disabled=true;jb.hidden=false;
     $('.fjq',root).innerHTML=`<span class="big">Each jump is ${fr(q.a,q.b)}. The frog makes <b>${q.n}</b> jumps.</span><br><span class="small">Tap the lily pad where it will land, then press Jump!</span>`;msg.innerHTML='';draw()}
   jb.onclick=()=>{if(busy||!run||chosen==null)return;busy=true;jb.hidden=true;jump()};
   function jump(){const dur=Math.max(.3,.6-q.n*.03);let i=0,tt=0;
     anim=loop(dt=>{tt+=dt/dur;if(tt>=1){tt=0;i++;hop=i;if(i>=q.n){anim();anim=null;cur=-1;fx=X(q.k);fy=PY-6;return done()}}
       const x0=X(i*q.a),x1=X((i+1)*q.a),h=arcH(x0,x1);fx=x0+(x1-x0)*tt;fy=PY-6-4*h*tt*(1-tt);hop=i+1;cur=i;draw()})}
-  function done(){const ok=chosen===q.k;draw(true);
+  function done(){const ok=chosen===q.k;
+    if(!ok&&!sink){sink={k:q.k,p:0};let tt=0;anim=loop(dt=>{tt+=dt/0.9;const p=Math.min(1,tt);sink.p=p;fy=PY-6+p*34;fa=Math.max(0,1-p*1.3);draw(false);
+      if(p>=1){anim();anim=null;sink.done=true;fa=0;done()}});return}
+    draw(true);
     const sum=`${q.n} × ${fr(q.a,q.b)} = ${fr(q.k,q.b)}`+(q.k>=q.b||gcd(q.k,q.b)>1?` = ${mixed(q.k)}`:'');
     let extra='';if(!ok&&chosen!=null)extra=`<div class="small">Your pad was ${mixed(chosen)}.</div>`;
     if(ok){landed++;const pts=10*level+Math.ceil(t);score+=pts;toast(stage,`Ribbit! +${pts}`,'#15803d');msg.innerHTML=sum;
@@ -750,7 +757,7 @@ function frogJumps(root,key){
   function start(){lives=3;score=0;level=1;landed=0;run=true;hud();newQ();stop&&stop();stop=loop(tick)}
   function end(){run=false;stop&&stop();jb.hidden=true;const b=GK.best(key,score);overlay(stage,`<div class="emo">🐸</div><h2>Game over</h2><p>The frog landed safely <b>${landed}</b> times. Score <b>${score}</b> · Best ${b}</p><p class="small">Tip: 6 jumps of ${fr(3,4)} is 6 × 3 quarters = 18 quarters.</p>`,'Play again',start)}
   lives=3;score=0;level=1;hud();busy=true;q={a:3,b:4,n:6,k:18,M:5};hop=0;cur=-1;chosen=null;fx=X(0);fy=PY-6;jb.hidden=true;draw();
-  overlay(stage,`<div class="emo">🐸</div><h2>Frog Jumps</h2><p>There is a lily pad at every fraction step. The frog always jumps the same fraction.</p><p>Tap the pad where it will land, then press <b>Jump!</b> Wrong pad: splash!</p>`,'Start',start);
+  overlay(stage,`<div class="emo">🐸</div><h2>Frog Jumps</h2><p>There is a lily pad at every fraction step. The frog always jumps the same fraction.</p><p>Put your 🚩 on the pad where it will land, then press <b>Jump!</b> Only the flagged pad is strong enough: anywhere else, splash!</p>`,'Start',start);
   return()=>{run=false;stop&&stop();anim&&anim();timers.forEach(clearTimeout)};
 }
 
