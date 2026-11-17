@@ -258,7 +258,9 @@ footer{text-align:center;font-size:.8rem;color:var(--mute);padding:10px 16px 30p
 .wall rect{cursor:pointer}
 .acts{display:flex;gap:6px}
 label.tog{display:inline-flex;gap:8px;align-items:center;font-size:.95rem;cursor:pointer}
-.fj{background:linear-gradient(180deg,#ecfeff,#a5f3fc 55%,#0e7490);color:var(--ink)}
+.fj{background:linear-gradient(180deg,#ecfeff,#cffafe 70%,#67e8f9);color:var(--ink)}
+.fj .fj-ghost{stroke:#0e7490;stroke-width:2.5;stroke-dasharray:6 5}
+.fj .fj-done{stroke:#0891b2;stroke-width:2.5}
 .fj .ovl{background:rgba(236,254,255,.96)}
 .fj .hud .lvl{background:rgba(0,0,0,.07)}
 .fj .tbar{height:7px;margin:0 14px;background:rgba(0,0,0,.08);border-radius:4px;overflow:hidden}
@@ -266,8 +268,7 @@ label.tog{display:inline-flex;gap:8px;align-items:center;font-size:.95rem;cursor
 .fj .fjq{text-align:center;padding:10px 14px 0;font-size:1.05rem}
 .fj .fjq .big{font-size:1.25rem}
 .fj .pond svg{display:block;width:100%;max-width:640px;margin:0 auto;touch-action:manipulation}
-.fj .fjmsg{text-align:center;min-height:2.8em;padding:2px 14px 14px;font-size:1rem;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.35)}
-.fj .fjmsg .frac span:last-child{border-top-color:#fff}
+.fj .fjmsg{text-align:center;min-height:2.8em;padding:2px 14px 14px;font-size:1.1rem;color:var(--ink)}
 </style>
 </head><body>
 <header><div class="wrap"><h1>S2 Maths<span class="by">Oreste Campagner · Tallinn European School</span></h1>
@@ -693,54 +694,65 @@ function perfectSlice(root,key){
 /* ================= FROG JUMPS ================= */
 /* Level set 1 = fraction × whole number (L44). Later: how many jumps to a pad (whole ÷ fraction), tired frog (fraction × fraction), fraction ÷ fraction. */
 function frogJumps(root,key){
-  const LV=[null,{fs:[[1,2],[1,3],[1,4]],n:[2,9],M:6,T:22,ticks:true},{fs:[[2,3],[3,4],[2,5],[3,5],[3,2],[5,4]],n:[2,7],M:8,T:20,ticks:true},{fs:[[3,4],[2,3],[5,6],[3,8],[4,5],[7,4],[5,3]],n:[2,9],M:10,T:17,ticks:true},{fs:[[3,4],[2,3],[5,6],[3,8],[4,5],[7,4],[5,3],[7,10]],n:[3,9],M:10,T:15,ticks:false}];
+  const LV=[null,{fs:[[1,2],[1,3],[1,4]],n:[2,8],M:5,T:25,lab:true},{fs:[[1,2],[1,3],[1,4],[2,3],[3,4]],n:[2,6],M:6,T:25,lab:true},{fs:[[2,3],[3,4],[2,5],[3,5],[3,2],[5,4]],n:[2,7],M:7,T:22,lab:false},{fs:[[3,4],[2,3],[5,6],[3,8],[4,5],[7,4],[5,3]],n:[2,8],M:8,T:20,lab:false}];
   root.innerHTML=`<div class="stage fj"><div class="hud"><span class="hs"></span><span class="lvl lv"></span><span class="pts"></span></div><div class="tbar"><i></i></div>
    <div class="fjq" aria-live="polite"></div><div class="pond"></div><div class="fjmsg" aria-live="polite"></div></div>`;
   const stage=$('.stage',root),pond=$('.pond',root),msg=$('.fjmsg',root);
-  let lives,score,level,landed,q,t,T,run=false,stop=null,anim=null,busy,timers=[],fx,fy,chosen,hop;
-  const W=600,H=200,LY=128,X0=28,X1=572;
-  const X=k=>X0+(X1-X0)*k/(q.b*q.M);           // k = position in 1/b steps
+  let lives,score,level,landed,q,t,T,run=false,stop=null,anim=null,busy,timers=[],fx,fy,chosen,hop,cur;
+  const W=600,H=250,LY=168,PY=LY-104,X0=34,X1=566;
+  const X=k=>X0+(X1-X0)*k/(q.b*q.M);           // k = position counted in 1/b steps
+  const simpTxt=(n,d)=>{const[x,y]=simp(n,d);return y===1?String(x):`${x}/${y}`};
   const mixed=k=>{const w=Math.floor(k/q.b),r=k%q.b;if(!r)return`<b>${w}</b>`;const[sr,sb]=simp(r,q.b);return`${w?`<b>${w}</b>`:''}${fr(sr,sb)}`};
   const mixedTxt=k=>{const w=Math.floor(k/q.b),r=k%q.b;if(!r)return String(w);const[sr,sb]=simp(r,q.b);return`${w?w+' ':''}${sr}/${sb}`};
   const hud=()=>{$('.hs',root).textContent=hearts(lives);$('.pts',root).textContent=`⭐ ${score}`;$('.lv',root).textContent=`Level ${level}`};
   function makeQ(){const L=LV[level];let a,b,n,k;
-    do{[a,b]=pick(L.fs);n=rnd(L.n[0],L.n[1]);k=n*a}while(k/b>L.M-1||k<2||n*a===a);
-    const M=Math.min(L.M,Math.max(4,Math.ceil(k/b)+rnd(1,2)));q={a,b,n,k,M};
-    const minGap=Math.ceil(58/((X1-X0)/(b*M)));    // keep pads well apart, also on phones
-    const cand=shuffle([a,n*b+a,k+1,k-1,k+b,k-b,n+a,k+2,k-2,Math.round(k/2)].filter(x=>x>0&&x<=b*M&&x!==k));
+    do{[a,b]=pick(L.fs);n=rnd(L.n[0],L.n[1]);k=n*a}while(k/b>L.M-.5||k<=a);
+    const M=Math.min(L.M,Math.ceil(k/b)+1);q={a,b,n,k,M};
+    const step=(X1-X0)/(b*M),minGap=Math.max(1,Math.ceil(62/step));    // pads well apart, also on phones
+    const cand=shuffle([a,n*b+a,k+a,k-a,k+b,k-b,k+1,k-1,n+a].filter(x=>x>0&&x<=b*M&&x!==k));
     const pads=[k];for(const c of cand){if(pads.length>=4)break;if(pads.every(p=>Math.abs(p-c)>=minGap))pads.push(c)}
     for(let c=1;pads.length<4&&c<=b*M;c++)if(pads.every(p=>Math.abs(p-c)>=minGap))pads.push(c);
     q.pads=shuffle(pads)}
+  const arc=(i,cls)=>{const x0=X(i*q.a),x1=X((i+1)*q.a),h=Math.min(52,14+(x1-x0)*.55);
+    return`<path d="M${x0} ${LY-6} Q${(x0+x1)/2} ${LY-6-2*h} ${x1} ${LY-6}" fill="none" class="${cls}"/>`};
   function draw(reveal){const L=LV[level];let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="number line with lily pads">`;
-    s+=`<rect x="0" y="${LY+22}" width="${W}" height="${H-LY}" fill="#0e7490" opacity=".35"/>`;
-    s+=`<line x1="${X0-10}" y1="${LY}" x2="${X1+10}" y2="${LY}" stroke="#7c2d12" stroke-width="7" stroke-linecap="round"/>`;
-    for(let i=0;i<=q.M*q.b;i++){const x=X(i),whole=i%q.b===0;if(!whole&&!L.ticks)continue;
-      s+=`<line x1="${x}" y1="${LY-(whole?11:6)}" x2="${x}" y2="${LY+(whole?11:6)}" stroke="#451a03" stroke-width="${whole?2.6:1.2}"/>`;
-      if(whole)s+=`<text x="${x}" y="${LY+40}" text-anchor="middle" font-size="21" font-weight="700" fill="#0f172a" font-family="Lexend,sans-serif">${i/q.b}</text>`}
+    // number line: thin fraction ticks, bold whole ticks, wholes labelled below
+    s+=`<line x1="${X0-8}" y1="${LY}" x2="${X1+8}" y2="${LY}" stroke="#334155" stroke-width="3" stroke-linecap="round"/>`;
+    for(let i=0;i<=q.M*q.b;i++){const x=X(i),whole=i%q.b===0;
+      s+=`<line x1="${x}" y1="${LY-(whole?12:7)}" x2="${x}" y2="${LY+(whole?12:7)}" stroke="#334155" stroke-width="${whole?3:1.5}"/>`;
+      if(whole)s+=`<text x="${x}" y="${LY+38}" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a" font-family="Lexend,sans-serif">${i/q.b}</text>`;
+      else if(L.lab&&(X1-X0)/(q.b*q.M)>=28)s+=`<text x="${x}" y="${LY+30}" text-anchor="middle" font-size="12" fill="#475569" font-family="Lexend,sans-serif">${simpTxt(i%q.b,q.b)}</text>`}
+    // "one jump" guide before the frog sets off
+    if(!busy&&!reveal){s+=arc(0,'fj-ghost');const xm=(X(0)+X(q.a))/2;s+=`<text x="${xm}" y="${LY-6-2*Math.min(52,14+(X(q.a)-X(0))*.55)/2-10}" text-anchor="middle" font-size="14" font-weight="700" fill="#0e7490" font-family="Lexend,sans-serif">1 jump</text>`}
+    // jumps done so far, numbered
+    for(let i=0;i<Math.min(hop,q.n);i++){if(i===cur&&!reveal)continue;s+=arc(i,'fj-done');
+      const xm=(X(i*q.a)+X((i+1)*q.a))/2;if((X(q.a)-X(0))>=22)s+=`<text x="${xm}" y="${LY-16}" text-anchor="middle" font-size="12" font-weight="700" fill="#0e7490" font-family="Lexend,sans-serif">${i+1}</text>`}
+    // lily pads float ABOVE the line, with a dashed pointer to their spot
     q.pads.forEach(p=>{const x=X(p),ok=reveal&&p===q.k,bad=reveal&&p===chosen&&p!==q.k;
-      s+=`<g data-p="${p}" style="cursor:pointer"><ellipse cx="${x}" cy="${LY-2}" rx="20" ry="10" fill="${ok?'#22c55e':bad?'#ef4444':'#4ade80'}" stroke="#14532d" stroke-width="2"/><path d="M${x} ${LY-2} L${x+19} ${LY-7} L${x+15} ${LY+3}Z" fill="#a5f3fc" opacity=".8"/>
-       <rect x="${x-24}" y="${LY-50}" width="48" height="70" fill="transparent"/></g>`;
-      if(reveal)s+=`<text x="${x}" y="${LY-56}" text-anchor="middle" font-size="16" font-weight="700" fill="${ok?'#15803d':'#334155'}" font-family="Lexend,sans-serif" pointer-events="none">${mixedTxt(p)}</text>`});
+      s+=`<line x1="${x}" y1="${PY+14}" x2="${x}" y2="${LY-4}" stroke="${ok?'#16a34a':bad?'#dc2626':'#15803d'}" stroke-width="2" stroke-dasharray="4 4" opacity=".7"/>
+       <g data-p="${p}" style="cursor:pointer"><ellipse cx="${x}" cy="${PY}" rx="21" ry="13" fill="${ok?'#22c55e':bad?'#ef4444':'#4ade80'}" stroke="#14532d" stroke-width="2"/>
+       <path d="M${x} ${PY} L${x+20} ${PY-6} L${x+17} ${PY+5}Z" fill="#ecfeff"/>
+       <rect x="${x-24}" y="${PY-24}" width="48" height="${LY-PY+18}" fill="transparent"/></g>`;
+      if(reveal)s+=`<text x="${x}" y="${PY-20}" text-anchor="middle" font-size="16" font-weight="700" fill="${ok?'#15803d':'#334155'}" font-family="Lexend,sans-serif" pointer-events="none">${mixedTxt(p)}</text>`});
     s+=`<text x="${fx}" y="${fy}" text-anchor="middle" font-size="30" pointer-events="none">🐸</text>`;
-    if(hop>0)s+=`<text x="${W-14}" y="22" text-anchor="end" font-size="15" font-weight="700" fill="#0f172a" font-family="Lexend,sans-serif">jump ${hop} of ${q.n}</text>`;
     pond.innerHTML=s+'</svg>';$$('g[data-p]',pond).forEach(g=>g.onclick=()=>choose(+g.dataset.p))}
-  function newQ(){busy=false;chosen=null;hop=0;makeQ();fx=X(0);fy=LY-8;T=LV[level].T;t=T;
-    $('.fjq',root).innerHTML=`<span class="big">Each jump is ${fr(q.a,q.b)}. The frog makes <b>${q.n}</b> jumps.</span><br><span class="small">Where will it land? Tap the lily pad.</span>`;msg.innerHTML='';draw()}
+  function newQ(){busy=false;chosen=null;hop=0;cur=-1;makeQ();fx=X(0);fy=LY-8;T=LV[level].T;t=T;
+    $('.fjq',root).innerHTML=`<span class="big">Each jump is ${fr(q.a,q.b)}. The frog makes <b>${q.n}</b> jumps.</span><br><span class="small">Where will it land? Tap a lily pad.</span>`;msg.innerHTML='';draw()}
   function choose(p){if(busy||!run)return;busy=true;chosen=p;jump()}
-  function jump(){const step=q.a,dur=Math.max(.22,.5-q.n*.03);let i=0,tt=0;
-    anim=loop(dt=>{tt+=dt/dur;if(tt>=1){tt=0;i++;hop=i;if(i>=q.n){anim();anim=null;fx=X(q.k);fy=LY-8;return done()}}
-      const f=tt,x0=X(i*step),x1=X((i+1)*step);fx=x0+(x1-x0)*f;fy=LY-8-Math.sin(Math.PI*f)*Math.min(46,16+(x1-x0)*.8);hop=i+1;draw()})}
+  function jump(){const dur=Math.max(.3,.6-q.n*.03);let i=0,tt=0;
+    anim=loop(dt=>{tt+=dt/dur;if(tt>=1){tt=0;i++;hop=i;if(i>=q.n){anim();anim=null;cur=-1;fx=X(q.k);fy=LY-8;return done()}}
+      const x0=X(i*q.a),x1=X((i+1)*q.a),h=Math.min(52,14+(x1-x0)*.55);fx=x0+(x1-x0)*tt;fy=LY-8-4*h*tt*(1-tt);hop=i+1;cur=i;draw()})}
   function done(){const ok=chosen===q.k;draw(true);
-    const sum=`${q.n} × ${fr(q.a,q.b)} = ${fr(q.k,q.b)}`+(q.k%q.b===0||q.k>q.b||gcd(q.k,q.b)>1?` = ${mixed(q.k)}`:'');
+    const sum=`${q.n} × ${fr(q.a,q.b)} = ${fr(q.k,q.b)}`+(q.k>=q.b||gcd(q.k,q.b)>1?` = ${mixed(q.k)}`:'');
     if(ok){landed++;const pts=10*level+Math.ceil(t);score+=pts;toast(stage,`Ribbit! +${pts}`,'#15803d');msg.innerHTML=sum;
-      if(landed%5===0&&level<LV.length-1){level++;later(()=>toast(stage,`Level ${level}!${level===4?' Only whole numbers marked now':''}`,'#0e7490'),900,timers)}}
-    else{lives--;stage.classList.add('shake');later(()=>stage.classList.remove('shake'),300,timers);msg.innerHTML=(chosen===null?'Too slow! ':'Splash! ')+sum;}
-    hud();if(lives<=0)return later(end,1800,timers);later(newQ,ok?1700:3400,timers)}
+      if(landed%5===0&&level<LV.length-1){level++;later(()=>toast(stage,`Level ${level}!${level===3?' No more fraction labels':''}`,'#0e7490'),900,timers)}}
+    else{lives--;stage.classList.add('shake');later(()=>stage.classList.remove('shake'),300,timers);msg.innerHTML=(chosen===null?'Too slow! ':'Splash! ')+sum}
+    hud();if(lives<=0)return later(end,2400,timers);later(newQ,ok?2200:4200,timers)}
   function tick(dt){if(!run||busy)return;t-=dt;$('.tbar i',root).style.width=Math.max(0,t/T*100)+'%';if(t<=0){busy=true;chosen=null;jump()}}
   function start(){lives=3;score=0;level=1;landed=0;run=true;hud();newQ();stop&&stop();stop=loop(tick)}
   function end(){run=false;stop&&stop();const b=GK.best(key,score);overlay(stage,`<div class="emo">🐸</div><h2>Game over</h2><p>The frog landed safely <b>${landed}</b> times. Score <b>${score}</b> · Best ${b}</p><p class="small">Tip: 6 jumps of ${fr(3,4)} is 6 × 3 quarters = 18 quarters.</p>`,'Play again',start)}
-  lives=3;score=0;level=1;hud();q={a:3,b:4,n:6,k:18,M:6,pads:[]};hop=0;fx=X(0);fy=LY-8;draw();
-  overlay(stage,`<div class="emo">🐸</div><h2>Frog Jumps</h2><p>The frog always jumps the same fraction.</p><p>Work out where it will land and pick the right lily pad, or it falls in the pond!</p>`,'Start',start);
+  lives=3;score=0;level=1;hud();busy=true;q={a:3,b:4,n:6,k:18,M:5,pads:[]};hop=0;cur=-1;fx=X(0);fy=LY-8;draw();
+  overlay(stage,`<div class="emo">🐸</div><h2>Frog Jumps</h2><p>The frog always jumps the same fraction of the number line.</p><p>Work out where it will land and tap that lily pad, or it falls in the pond!</p>`,'Start',start);
   return()=>{run=false;stop&&stop();anim&&anim();timers.forEach(clearTimeout)};
 }
 
