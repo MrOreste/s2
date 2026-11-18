@@ -266,6 +266,28 @@ footer{text-align:center;font-size:.8rem;color:var(--mute);padding:10px 16px 30p
 .amlist li{margin:.3rem 0}
 .acts{display:flex;gap:6px}
 label.tog{display:inline-flex;gap:8px;align-items:center;font-size:.95rem;cursor:pointer}
+.cb{background:linear-gradient(180deg,#fff7ed,#fed7aa);color:var(--ink)}
+.cb .ovl{background:rgba(255,247,237,.96)}
+.cb .hud .lvl{background:rgba(0,0,0,.07)}
+.cb .cbq{text-align:center;padding:12px 14px 4px;font-size:1.05rem;line-height:1.5}
+.cb .cbq .big{font-size:1.6rem;font-weight:800;margin:4px 0}
+.cb .cbq .small{margin-top:4px}
+.cb .cbbar svg{display:block;width:100%;max-width:480px;margin:4px auto}
+.cb .cbbar .hit{cursor:pointer}
+.cb .cbopts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px}
+.cb .cbo,.cb .cbs{border-color:#92400e;color:#78350f;min-width:70px;font-size:1.05rem}
+.cb .cbgo{margin-top:8px}
+.cb .done{background:#92400e;box-shadow:0 3px 0 #451a03}
+.cb .right{background:#dcfce7!important;border-color:#16a34a!important;color:#14532d!important}
+.cb .wrong{background:#fee2e2!important;border-color:#dc2626!important;color:#7f1d1d!important}
+.cb .cbwraps{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:10px}
+.cb .wrapb{font:inherit;cursor:pointer;width:86px;height:110px;border-radius:10px;border:3px solid #7c2d12;background:repeating-linear-gradient(135deg,#dc2626 0 12px,#b91c1c 12px 24px);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 0 #7f1d1d}
+.cb .wrapb>span{background:#fff;color:var(--ink);border-radius:8px;padding:6px 10px;font-size:1.25rem;font-weight:700}
+.cb .wrapb[disabled]{cursor:default}
+.cb .cbmsg{text-align:center;min-height:2.4em;padding:4px 14px 14px;font-size:1.05rem}
+.cb .cbbonus{margin-top:10px;background:#fef9c3;border:2px solid #facc15;border-radius:14px;padding:8px 10px}
+.cb .nx{margin-top:10px}
+.cb .nextb{background:#92400e;box-shadow:0 3px 0 #451a03;font-size:1.05rem;padding:10px 24px}
 .fj{background:linear-gradient(180deg,#ecfeff,#cffafe 70%,#67e8f9);color:var(--ink)}
 .fj .fj-ghost{stroke:#0e7490;stroke-width:2.5;stroke-dasharray:6 5}
 .fj .fj-done{stroke:#0891b2;stroke-width:2.5}
@@ -829,7 +851,101 @@ function frogJumps(root,key){
   return()=>{run=false;stop&&stop();anim&&anim();timers.forEach(clearTimeout)};
 }
 
+/* ================= CHOCOLATE BAR SHARE ================= */
+/* Multiplying fractions with the area model. L1 cut & count, L2 choose the grid, L3 unwrap the answer. Add a cross-cancelling level later. */
+function chocBar(root,key){
+  const LV=[null,{need:4},{need:4},{need:99}];
+  root.innerHTML=`<div class="stage cb"><div class="hud"><span class="hs"></span><span class="lvl lv"></span><span class="pts"></span></div>
+   <div class="cbq" aria-live="polite"></div><div class="cbbar"></div><div class="cbmsg" aria-live="polite"></div></div>`;
+  const stage=$('.stage',root),qEl=$('.cbq',root),barEl=$('.cbbar',root),msg=$('.cbmsg',root);
+  let lives,score,level,good,q,phase,cols,rows,run=false,timers=[];
+  const hud=()=>{$('.hs',root).textContent=hearts(lives);$('.pts',root).textContent=`🍫 ${score}`;$('.lv',root).textContent=`Level ${level}`};
+  const F=(n,d)=>d===1?`<b>${n}</b>`:fr(n,d);
+  function makeQ(){let a,b,c,d;
+    if(level<3){do{b=rnd(2,5);d=rnd(2,5);a=rnd(1,b-1);c=rnd(1,d-1)}while(b*d>20||b*d<6||gcd(a,b)>1||gcd(c,d)>1)}
+    else{do{b=rnd(2,9);d=rnd(2,9);a=rnd(1,b-1);c=rnd(1,d-1)}while(b*d>48||b*d<6||gcd(a,b)>1||gcd(c,d)>1)}
+    q={a,b,c,d,n:a*c,m:b*d}}
+  // ---------- drawing ----------
+  function drawBar(){const W=480,H=300,P=36,{a,b,c,d}=q,cut=phase!=='grid'&&phase!=='wrap',cw=(W-P-8)/(cut?b:1),rh=(H-P-8)/(cut?d:1),X0=P,Y0=P;
+    let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="chocolate bar">`;
+    s+=`<rect x="${X0-4}" y="${Y0-4}" width="${W-P}" height="${H-P}" rx="10" fill="#3f1d0b"/>`;
+    const nb=cut?b:1,nd=cut?d:1;
+    for(let r=0;r<nd;r++)for(let k=0;k<nb;k++){const mine=cut&&cols.has(k),fr_=mine&&rows.has(r)&&phase!=='cols';
+      const fill=fr_?'#fde68a':mine?'#b45309':'#5b2a0e';
+      s+=`<rect x="${X0+k*cw+2}" y="${Y0+r*rh+2}" width="${cw-4}" height="${rh-4}" rx="5" fill="${fill}" stroke="${fr_?'#ca8a04':'#2a1205'}" stroke-width="2"/>`;
+      if(!fr_)s+=`<rect x="${X0+k*cw+6}" y="${Y0+r*rh+6}" width="${cw-12}" height="${Math.min(8,rh/5)}" rx="3" fill="#fff" opacity=".08"/>`}
+    const FT='font-family="Lexend,sans-serif" font-weight="700"';
+    if(cut&&cols.size&&phase!=='cols'){const ks=[...cols].sort((x,y)=>x-y);s+=`<text x="${X0+(ks[0]+ks[ks.length-1]+1)/2*cw}" y="${Y0-12}" text-anchor="middle" font-size="16" fill="#92400e" ${FT}>you: ${q.a}/${q.b}</text>`}
+    if(cut&&rows.size&&phase!=='cols'&&phase!=='rows'){const rs=[...rows].sort((x,y)=>x-y),ym=Y0+(rs[0]+rs[rs.length-1]+1)/2*rh;s+=`<text x="${X0-14}" y="${ym}" text-anchor="middle" font-size="15" fill="#a16207" ${FT} transform="rotate(-90 ${X0-14} ${ym})">friend: ${q.c}/${q.d}</text>`}
+    // tap targets
+    if(phase==='cols')for(let k=0;k<b;k++)s+=`<rect class="hit" data-col="${k}" x="${X0+k*cw}" y="${Y0}" width="${cw}" height="${H-P-8}" fill="transparent"/>`;
+    if(phase==='rows')for(let r=0;r<d;r++)s+=`<rect class="hit" data-row="${r}" x="${X0}" y="${Y0+r*rh}" width="${W-P-8}" height="${rh}" fill="transparent"/>`;
+    barEl.innerHTML=s+'</svg>';
+    $$('.hit',barEl).forEach(h=>h.onclick=()=>{if(h.dataset.col!=null){const k=+h.dataset.col;cols.has(k)?cols.delete(k):cols.add(k)}else{const r=+h.dataset.row;rows.has(r)?rows.delete(r):rows.add(r)}drawBar();counter()})}
+  const counter=()=>{const el=$('.cnt',qEl);if(el)el.textContent=phase==='cols'?`${cols.size} of ${q.b} columns`:`${rows.size} of ${q.d} rows`};
+  const story=()=>`You get ${F(q.a,q.b)} of the bar. Your friend asks for ${F(q.c,q.d)} of <b>your</b> piece.`;
+  const btn=(t,cls='')=>`<button type="button" class="btn ${cls}">${t}</button>`;
+  // ---------- rounds ----------
+  function newRound(){makeQ();cols=new Set();rows=new Set();msg.innerHTML='';
+    if(level===1){phase='cols';qEl.innerHTML=`${story()}<div class="small">Step 1: tap <b>${q.a}</b> column${q.a>1?'s':''} to take ${F(q.a,q.b)} of the bar. <span class="cnt"></span></div><div class="cbgo">${btn('Done ✓','done')}</div>`;
+      $('.done',qEl).onclick=()=>{if(cols.size!==q.a){msg.innerHTML=`${F(q.a,q.b)} means <b>${q.a}</b> of the ${q.b} columns. Try again!`;return}
+        msg.innerHTML='';phase='rows';qEl.innerHTML=`${story()}<div class="small">Step 2: tap <b>${q.c}</b> row${q.c>1?'s':''} to give ${F(q.c,q.d)} of your piece. <span class="cnt"></span></div><div class="cbgo">${btn('Done ✓','done')}</div>`;
+        $('.done',qEl).onclick=()=>{if(rows.size!==q.c){msg.innerHTML=`${F(q.c,q.d)} means <b>${q.c}</b> of the ${q.d} rows. Try again!`;return}msg.innerHTML='';askWhole()};drawBar();counter()};
+      drawBar();counter()}
+    else if(level===2){phase='grid';const{a,b,c,d}=q;
+      const opts=[{t:`${b} × ${d} = ${b*d} pieces`,ok:true}];const add=t=>{if(!opts.some(o=>o.t===t))opts.push({t,ok:false})};
+      add(`${b} + ${d} = ${b+d} pieces`);add(`${a} × ${c} = ${a*c} pieces`);if(b!==d)add(`${b} × ${b} = ${b*b} pieces`);add(`${a+c} pieces`);
+      const ch=shuffle(opts.slice(0,4));
+      qEl.innerHTML=`${story()}<div class="small">How should you cut the bar first?</div><div class="cbopts">${ch.map((o,i)=>`<button type="button" class="btn ghost cbo" data-i="${i}">${o.t}</button>`).join('')}</div>`;
+      $$('.cbo',qEl).forEach(bt=>bt.onclick=()=>{const o=ch[+bt.dataset.i];$$('.cbo',qEl).forEach(x=>x.disabled=true);
+        if(o.ok){bt.classList.add('right');msg.innerHTML=`Yes! ${b} columns for ${b===2?'halves':b===3?'thirds':b===4?'quarters':b+'ths'}, ${d} rows for ${d===2?'halves':d===3?'thirds':d===4?'quarters':d+'ths'}.`}
+        else{bt.classList.add('wrong');lives--;hud();stage.classList.add('shake');later(()=>stage.classList.remove('shake'),300,timers);msg.innerHTML=`Those pieces don't fit. You need ${b} columns and ${d} rows: ${b} × ${d} = <b>${b*d}</b> pieces.`;if(lives<=0)return nextBtn(true)}
+        phase='show';for(let k=0;k<a;k++)cols.add(k);for(let r=0;r<c;r++)rows.add(r);drawBar();later(askWhole,700,timers)});
+      drawBar()}
+    else{phase='wrap';const{a,b,c,d,n,m}=q,[sn,sd]=simp(n,m);
+      const opts=[{n:sn,d:sd,ok:true}];const add=(x,y)=>{if(x<1||y<1)return;const[p,r]=simp(x,y);if(p*sd===sn*r)return;if(opts.some(o=>o.n===x&&o.d===y))return;opts.push({n:x,d:y,ok:false})};
+      add(a+c,b+d);add(a*d,b*c);add(n,b+d);add(a*c,b*d+1);if(gcd(n,m)>1)add(n/gcd(n,m),m);add(c*b,a*d);
+      const ch=shuffle(opts.slice(0,4));
+      qEl.innerHTML=`<div class="big">${F(a,b)} × ${F(c,d)} = ?</div><div class="small">${story()} Unwrap the right answer!</div><div class="cbwraps">${ch.map((o,i)=>`<button type="button" class="wrapb" data-i="${i}"><span>${F(o.n,o.d)}</span></button>`).join('')}</div>`;
+      barEl.innerHTML='';
+      $$('.wrapb',qEl).forEach(bt=>bt.onclick=()=>{const o=ch[+bt.dataset.i];$$('.wrapb',qEl).forEach(x=>x.disabled=true);bt.classList.add(o.ok?'right':'wrong');
+        phase='show';for(let k=0;k<a;k++)cols.add(k);for(let r=0;r<c;r++)rows.add(r);drawBar();
+        const line=`${F(a,b)} × ${F(c,d)} = ${fr(n,m)}${sd!==m?` = ${F(sn,sd)}`:''}`;
+        if(o.ok){good++;const p=15;score+=p;toast(stage,`Delicious! +${p}`,'#92400e');msg.innerHTML=`${line}<div class="small">The friend gets ${n} of the ${m} pieces.</div>`}
+        else{lives--;stage.classList.add('shake');later(()=>stage.classList.remove('shake'),300,timers);msg.innerHTML=`Not that one! ${line}<div class="small">Top × top = ${n}, bottom × bottom = ${m}${sd!==m?`, then simplify (÷ ${m/sd})`:''}.</div>`}
+        hud();nextBtn(lives<=0)})}}
+  function askWhole(){phase='ask';drawBar();const{a,b,c,d,n,m}=q;
+    const right={n,d:m};const opts=[{...right,ok:true}];const add=(x,y)=>{if(x<1||y<1||x*m===n*y)return;if(opts.some(o=>o.n===x&&o.d===y))return;opts.push({n:x,d:y,ok:false})};
+    add(c,d);add(n,a*d);add(a+c,b+d);add(n,b+d);add(a,b);
+    const ch=shuffle(opts.slice(0,4));
+    qEl.innerHTML=`${story()}<div><b>What fraction of the WHOLE bar does your friend get?</b></div><div class="cbopts">${ch.map((o,i)=>`<button type="button" class="btn ghost cbo" data-i="${i}">${fr(o.n,o.d)}</button>`).join('')}</div>`;
+    $$('.cbo',qEl).forEach(bt=>bt.onclick=()=>{const o=ch[+bt.dataset.i];$$('.cbo',qEl).forEach(x=>x.disabled=true);
+      const line=`${F(a,b)} × ${F(c,d)} = ${fr(n,m)}`,why=`<div class="small">The bar has ${b} × ${d} = <b>${m}</b> pieces. Your friend has ${a} × ${c} = <b>${n}</b>.</div>`;
+      if(o.ok){bt.classList.add('right');good++;const p=10*level;score+=p;toast(stage,`Yum! +${p}`,'#92400e');msg.innerHTML=line+why}
+      else{bt.classList.add('wrong');lives--;stage.classList.add('shake');later(()=>stage.classList.remove('shake'),300,timers);msg.innerHTML=`Not quite! ${line}`+why}
+      hud();if(lives<=0)return nextBtn(true);simplifyBonus()})}
+  function simplifyBonus(){const{n,m}=q,[sn,sd]=simp(n,m),g=m/sd,simpler=g>1;
+    const lab=(x,y)=>y===1?String(x):`${x}/${y}`;const right=simpler?lab(sn,sd):'Already simplest';const opts=[right];
+    const add=(x,y)=>{if(!Number.isInteger(x)||!Number.isInteger(y)||x<1||y<1)return;const t=lab(x,y);if(x*m===n*y||opts.includes(t))return;opts.push(t)};
+    const sp=x=>{for(let f=2;f<=x;f++)if(x%f===0)return f;return x};
+    if(simpler){add(n,sd);add(sn,m);opts.push('Already simplest')}else{if(n>1)add(n/sp(n),m);add(n,m/sp(m))}
+    const ch=shuffle(opts.slice(0,4));
+    msg.insertAdjacentHTML('beforeend',`<div class="cbbonus">⭐ <b>Bonus:</b> can you write ${fr(n,m)} more simply?<div class="cbopts">${ch.map((t,i)=>`<button type="button" class="btn ghost cbs" data-i="${i}">${t.includes('/')?fr(...t.split('/')):t}</button>`).join('')}</div></div>`);
+    $$('.cbs',msg).forEach(bt=>bt.onclick=()=>{const t=ch[+bt.dataset.i],ok=t===right;$$('.cbs',msg).forEach(x=>x.disabled=true);bt.classList.add(ok?'right':'wrong');
+      if(ok){const p=5*level;score+=p;toast(stage,`Bonus +${p}`,'#ca8a04');hud()}
+      $('.cbbonus',msg).insertAdjacentHTML('beforeend',`<div class="small">${simpler?`${fr(n,m)} = ${sd===1?`<b>${sn}</b>`:fr(sn,sd)} (÷ ${g})`:`${fr(n,m)} is already simplest: the HCF of ${n} and ${m} is 1.`}</div>`);
+      nextBtn(false)})}
+  function nextBtn(over){if(!over&&good>=LV[level].need&&level<LV.length-1){level++;good=0;later(()=>toast(stage,`Level ${level}!${level===2?' Choose how to cut the bar':' Unwrap the answer'}`,'#92400e'),600,timers)}
+    msg.insertAdjacentHTML('beforeend',`<div class="nx"><button type="button" class="btn nextb">${over?'See my score':'Next bar →'}</button></div>`);const nb=$('.nextb',msg);nb.focus({preventScroll:true});nb.onclick=()=>over?end():(hud(),newRound())}
+  function start(){lives=3;score=0;level=1;good=0;run=true;hud();newRound()}
+  function end(){run=false;const b=GK.best(key,score);overlay(stage,`<div class="emo">🍫</div><h2>Out of hearts!</h2><p>Score <b>${score}</b> · Best ${b}</p><p class="small">Tip: the bar is cut into bottom × bottom pieces, and the friend gets top × top of them.</p><p class="small">🚧 New levels coming soon!</p>`,'Play again',start)}
+  lives=3;score=0;level=1;good=0;hud();q={a:2,b:3,c:3,d:4};phase='grid';cols=new Set();rows=new Set();drawBar();
+  overlay(stage,`<div class="emo">🍫</div><h2>Chocolate Bar Share</h2><p>You get part of a chocolate bar, and your friend wants part of <b>your</b> piece.</p><p>How much of the <b>whole</b> bar does your friend get?</p><p class="small">🚧 New levels coming soon!</p>`,'Start',start);
+  return()=>{run=false;timers.forEach(clearTimeout)};
+}
+
 gameHub($('#gpick'),$('#gpanel'),{
+  cb:{title:'Chocolate Bar Share',emo:'🍫',desc:'Share a bar: how much of the whole does your friend get?',cls:'g-orange',run:chocBar},
   fj:{title:'Frog Jumps',emo:'🐸',desc:'Fraction jumps: find the lily pad where the frog lands.',cls:'g-green',run:frogJumps},
   ps:{title:'The Perfect Slice',emo:'🍞',desc:'Cut an even slice, then round the caliper readings.',cls:'g-red',run:perfectSlice},
   ff:{title:'Fraction Fill',emo:'🧱',desc:'Drop falling fractions to make exactly 1 whole.',cls:'g-purple',run:fractionFill},
