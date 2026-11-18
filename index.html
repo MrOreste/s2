@@ -341,7 +341,7 @@ nav.tabs .badge{font-size:.72rem;font-weight:600;background:#FFC83D;color:#3B260
  .brand b{font-size:1.25rem}
  nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;background:#fff;border-top:1px solid var(--line);justify-content:space-around;gap:0;padding:6px 2px calc(8px + env(safe-area-inset-bottom))}
  nav.tabs a{flex:1 1 0;flex-direction:column;gap:2px;color:#4a4560;font-size:.72rem;padding:2px 0;border-radius:0;background:none}
- nav.tabs a .ic{width:52px;height:30px;border-radius:15px;display:grid;place-items:center}
+ nav.tabs a .ic{width:min(52px,13vw);height:30px;border-radius:15px;display:grid;place-items:center}
  nav.tabs a.on{color:var(--teal);font-weight:600;background:none}
  nav.tabs a.on .ic{background:var(--tealbg)}
  nav.tabs .badge{position:absolute;top:0;left:calc(50% + 12px);width:10px;height:10px;padding:0;font-size:0;background:#E8590C;border:2px solid #fff}
@@ -356,7 +356,7 @@ nav.tabs .badge{font-size:.72rem;font-weight:600;background:#FFC83D;color:#3B260
 .maphint{text-align:center;margin:0;padding:6px 16px 0}
 .maphint span{display:inline-block;padding:8px 16px;border-radius:99px;background:rgba(255,255,255,.14);font-size:.9rem}
 .mglyph{position:absolute;font-size:3.4rem;opacity:.09;pointer-events:none;font-family:Georgia,serif}
-.stop{position:absolute;display:flex;align-items:center;gap:14px;border:0;background:none;color:#fff;font:inherit;cursor:pointer;padding:0;text-align:left}
+.stop{position:absolute;width:max-content;display:flex;align-items:center;gap:14px;border:0;background:none;color:#fff;font:inherit;cursor:pointer;padding:0;text-align:left}
 .stop.r{flex-direction:row-reverse;text-align:right}
 .stop .dot{flex:none;border-radius:50%;display:grid;place-items:center;font-weight:700;box-sizing:border-box}
 .stop .dot>*{display:block}
@@ -405,8 +405,10 @@ nav.tabs .badge{font-size:.72rem;font-weight:600;background:#FFC83D;color:#3B260
 @keyframes fadein{from{opacity:0}}
 @media(prefers-reduced-motion:reduce){.popcard,.popbg{animation:none}}
 /* sheets grouped by block */
-h4.blk{font-size:1.1rem;margin:1.4rem 0 .1rem;color:var(--ink)}
-h4.blk:first-child{margin-top:.6rem}
+.blkh{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;background:var(--sky);color:#fff;border-radius:12px;padding:9px 14px;margin:1.4rem 0 .2rem}
+.blkh:first-child{margin-top:.6rem}
+.blkh small{color:var(--soft);font-size:.85rem}
+.blkh b{font-weight:600;font-size:1.05rem}
 /* game folders */
 h3.gfold{display:flex;align-items:center;gap:8px;font-size:.85rem;margin:1.1rem 0 .5rem}
 h3.gfold:first-child{margin-top:.4rem}
@@ -421,7 +423,7 @@ h3.gfold:first-child{margin-top:.4rem}
 .nextck span{color:var(--soft)}
 </style>
 </head><body>
-<header class="top"><div class="topin"><a class="brand" href="#map"><span class="logo">S2</span><span><b>S2 Maths</b><small>Oreste Campagner · Tallinn European School</small></span></a><nav class="tabs" aria-label="Main"><a href="#map" data-v="map"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15M15 6v15"/></svg></span><span>Map</span></a><a href="#sheets" data-v="sheets"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M9 13h6M9 17h4"/></svg></span><span>Sheets</span></a><a href="#practice" data-v="practice"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16zM14 6l3 3"/></svg></span><span>Practice</span></a><a href="#games" data-v="games explore"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9h12a3 3 0 0 1 3 3v3a3 3 0 0 1-5 2l-1-1H9l-1 1a3 3 0 0 1-5-2v-3a3 3 0 0 1 3-3zM8 12v3M6.5 13.5h3M15 13h.01M17 14.5h.01"/></svg></span><span>Games</span></a><a href="#test" data-v="test"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg></span><span>Test prep</span><span class="badge">27 Nov</span></a></nav></div></header>
+<header class="top"><div class="topin"><a class="brand" href="#map"><span class="logo">S2</span><span><b>S2 Maths</b><small>Oreste Campagner · Tallinn European School</small></span></a><nav class="tabs" aria-label="Main"><a href="#map" data-v="map"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15M15 6v15"/></svg></span><span>Map</span></a><a href="#sheets" data-v="sheets"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M9 13h6M9 17h4"/></svg></span><span>Sheets</span></a><a href="#practice" data-v="practice"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16zM14 6l3 3"/></svg></span><span>Practice</span></a><a href="#explore" data-v="explore"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM15.5 8.5l-2 5-5 2 2-5z"/></svg></span><span>Explore</span></a><a href="#games" data-v="games"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9h12a3 3 0 0 1 3 3v3a3 3 0 0 1-5 2l-1-1H9l-1 1a3 3 0 0 1-5-2v-3a3 3 0 0 1 3-3zM8 12v3M6.5 13.5h3M15 13h.01M17 14.5h.01"/></svg></span><span>Games</span></a><a href="#test" data-v="test"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg></span><span>Test prep</span><span class="badge">27 Nov</span></a></nav></div></header>
 <section id="map" class="view"><div class="mapsky"><div class="mapin" id="mapin"></div><p class="maphint"><span>Choose a stop to open it</span></p></div></section>
 <div id="pop" class="pop" hidden><div class="popbg" data-close></div><div class="popcard" role="dialog" aria-modal="true" aria-labelledby="poptitle"><button type="button" class="popx" data-close aria-label="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><div id="popbody"></div></div></div>
 <main class="wrap">
@@ -438,12 +440,10 @@ h3.gfold:first-child{margin-top:.4rem}
 </section>
 
 <section id="games" class="view" hidden>
-  <div class="seg"><a href="#games">Play</a><a href="#explore">Explore</a></div>
   <div class="card"><h2>Games</h2><p class="small">Pick a game!</p><div id="gpick"></div><div id="gpanel" hidden></div></div>
 </section>
 
 <section id="explore" class="view" hidden>
-  <div class="seg"><a href="#games">Play</a><a href="#explore">Explore</a></div>
   <div class="card"><h2>Multiplying fractions: area model</h2><p class="small">Change the fractions. The overlap shows the answer.</p><div id="area"></div></div>
   <div class="card"><h2>Compare two fractions</h2><p class="small">Change the numbers. Which fraction is bigger?</p><div id="cmp"></div></div>
   <div class="card"><h2>Fraction wall</h2><p class="small">Tap a piece to find equal fractions.</p><div id="wall"></div></div>
@@ -1066,12 +1066,12 @@ gameHub($('#gpick'),$('#gpanel'),{
   pz:{topic:'Fractions',title:'Pizza Shop',emo:'🍕',desc:'Serve fraction orders fast for big tips.',cls:'g-orange',run:pizzaShop}});
 </script><script>
 /* ===== map home, pop-up windows, sheets grouped by block ===== */
-const SITE={"blocks": [{"label": "Weeks 12–13", "topic": "Multiplying and dividing fractions, BIDMAS with fractions", "weeks": [12, 13], "current": true, "practice": null, "check": {"name": "Check", "date": "Friday 27 November", "short": "Fri 27 Nov", "done": false}}, {"label": "Weeks 10–11", "topic": "Rounding, HCF, LCM and fractions", "weeks": [10, 11], "practice": "as", "check": {"name": "Fractions Check", "date": "Friday 13 November", "short": "Fri 13 Nov", "done": true}}], "sheetsEl": "#w10"};
+const SITE={"blocks": [{"label": "Weeks 12–13", "topic": "Fractions: × and ÷", "detail": "Multiplying and dividing fractions, BIDMAS with fractions", "weeks": [12, 13], "current": true, "practice": null, "check": {"name": "Check", "date": "Friday 27 November", "short": "Fri 27 Nov", "done": false}}, {"label": "Weeks 10–11", "topic": "Rounding and fractions", "detail": "Rounding, HCF, LCM and fractions", "weeks": [10, 11], "practice": "as", "check": {"name": "Fractions Check", "date": "Friday 13 November", "short": "Fri 13 Nov", "done": true}}], "sheetsEl": "#w10"};
 const sheetRow=([,,t,id,ans,tag])=>`<div class="sheet"><div class="ico">PDF</div><div class="name"><b>${t}${tag?` <span class="tag">${tag}</span>`:''}</b></div><div class="acts"><a class="btn ghost" href="sheets/${id}" target="_blank" rel="noopener">Sheet</a>${ans?`<a class="btn amber" href="sheets/${ans}" target="_blank" rel="noopener">Answers</a>`:''}</div></div>`;
 const sheetsFor=w=>SHEETS.map((x,i)=>[x,i]).filter(([x])=>x[0]===w).sort(([a,i],[b,j])=>lastL(b[1])-lastL(a[1])||i-j).map(([x])=>x);
 const weeksHtml=ws=>ws.slice().sort((a,b)=>b-a).filter(w=>sheetsFor(w).length).map(w=>`<h3>Week ${w}</h3>`+sheetsFor(w).map(sheetRow).join('')).join('');
 (()=>{const used=new Set();let h='';
-  SITE.blocks.forEach(b=>{b.weeks.forEach(w=>used.add(w));const inner=weeksHtml(b.weeks);if(inner)h+=`<h4 class="blk">${b.label} · ${b.topic}</h4>`+inner});
+  SITE.blocks.forEach(b=>{b.weeks.forEach(w=>used.add(w));const inner=weeksHtml(b.weeks);if(inner)h+=`<div class="blkh"><small>${b.label}</small><b>${b.topic}</b></div>`+inner});
   const rest=[...new Set(SHEETS.map(x=>x[0]))].filter(w=>!used.has(w));if(rest.length)h+=weeksHtml(rest);
   $(SITE.sheetsEl).innerHTML=h})();
 
@@ -1105,9 +1105,9 @@ function openBlock(i){const b=SITE.blocks[i],c=b.check;const list=weeksHtml(b.we
   const ck=c?(c.done?`<div class="pcard chkc"><span class="pi">${ico(IC.tick)}</span><span><b>${c.name} · ${c.date}</b><small>Done</small></span></div>`
     :`<a class="pcard chkc" href="#test"><span class="pi">${ico(IC.flag)}</span><span><b>${c.name} · ${c.date}</b><small>Test prep: coming soon</small></span></a>`):'';
   const pr=b.practice?`<a class="pcard prac" href="#practice" data-chip="${b.practice}"><span class="pi">${ico(IC.pen)}</span><span><b>Practise these topics</b><small>New questions every time</small></span></a>`:'';
-  openPop(`<div class="pophead"><small>${b.label}</small><h2 id="poptitle">${b.topic}</h2></div>${ck||pr?`<div class="popacts">${ck}${pr}</div>`:''}${list||'<p class="soonbox">New sheets coming soon</p>'}`)}
+  openPop(`<div class="pophead"><small>${b.label}</small><h2 id="poptitle">${b.topic}</h2><p class="small" style="margin:.2rem 0 0">${b.detail}</p></div>${ck||pr?`<div class="popacts">${ck}${pr}</div>`:''}${list||'<p class="soonbox">New sheets coming soon</p>'}`)}
 function openCheck(i){const b=SITE.blocks[i],c=b.check;
-  openPop(`<div class="ckbig"><span class="pi" style="background:${c.done?'var(--goodbg)':'#FFC83D'};color:${c.done?'var(--good)':'#3B2600'}">${ico(c.done?IC.tick:IC.flag,26)}</span><small class="small">${c.done?'Done':'Coming up'}</small><h2 id="poptitle" style="color:var(--ink);margin:0">${c.name} · ${c.date}</h2><p class="small" style="font-size:1rem">${b.topic}</p>${c.done?'':'<a class="btn" href="#test">Test prep</a>'}</div>`,true)}
+  openPop(`<div class="ckbig"><span class="pi" style="background:${c.done?'var(--goodbg)':'#FFC83D'};color:${c.done?'var(--good)':'#3B2600'}">${ico(c.done?IC.tick:IC.flag,26)}</span><small class="small">${c.done?'Done':'Coming up'}</small><h2 id="poptitle" style="color:var(--ink);margin:0">${c.name} · ${c.date}</h2><p class="small" style="font-size:1rem">${b.detail}</p>${c.done?'':'<a class="btn" href="#test">Test prep</a>'}</div>`,true)}
 
 $('#mapin').addEventListener('click',e=>{const t=e.target.closest('.stop');if(!t||t.disabled)return;if(t.dataset.blk)openBlock(+t.dataset.blk);else if(t.dataset.chk)openCheck(+t.dataset.chk)});
 $('#pop').addEventListener('click',e=>{if(e.target.closest('[data-close]')){closePop();return}
