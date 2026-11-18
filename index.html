@@ -256,6 +256,14 @@ footer{text-align:center;font-size:.8rem;color:var(--mute);padding:10px 16px 30p
 .step span{min-width:30px;text-align:center;font-weight:600}
 .cmp{font-size:1.4rem;font-weight:700;margin:.6rem 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .wall rect{cursor:pointer}
+.amwrap{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-top:.4rem}
+.am{width:100%;max-width:360px;flex:1 1 280px}
+.amside{flex:1 1 220px}
+.amsteps{display:flex;gap:6px;flex-wrap:wrap}
+.amf{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.amst{padding:6px 12px;font-size:.9rem}
+.amlist{padding-left:1.2rem;margin:.6rem 0 0;font-size:.95rem;line-height:1.45}
+.amlist li{margin:.3rem 0}
 .acts{display:flex;gap:6px}
 label.tog{display:inline-flex;gap:8px;align-items:center;font-size:.95rem;cursor:pointer}
 .fj{background:linear-gradient(180deg,#ecfeff,#cffafe 70%,#67e8f9);color:var(--ink)}
@@ -301,6 +309,7 @@ label.tog{display:inline-flex;gap:8px;align-items:center;font-size:.95rem;cursor
 </section>
 
 <section id="explore" class="view" hidden>
+  <div class="card"><h2>Multiplying fractions: area model</h2><p class="small">Change the fractions. The overlap shows the answer.</p><div id="area"></div></div>
   <div class="card"><h2>Compare two fractions</h2><p class="small">Change the numbers. Which fraction is bigger?</p><div id="cmp"></div></div>
   <div class="card"><h2>Fraction wall</h2><p class="small">Tap a piece to find equal fractions.</p><div id="wall"></div></div>
 </section>
@@ -480,6 +489,34 @@ const addsub=(op0,kind0)=>()=>{let a,b,c,d,op;do{op=op0||pick(['+','−']);[a,b,
   check:fracCheck([sn,sd],f=>(op==='+'&&f[0]*(b+d)===(a+c)*f[1])||(op==='−'&&b!==d&&f[0]*Math.abs(b-d)===(a-c)*f[1])?`Did you ${op==='+'?'add':'subtract'} the denominators? ${fr(1,2)} + ${fr(1,2)} is not ${fr(2,4)}! Make the denominators the same first.`:''),sol}};
 
 /* ---------- explorers ---------- */
+function areaModel(el){const st={a:2,b:5,c:1,d:7,step:3};
+ const stepper=k=>`<span class="step"><button type="button" data-k="${k}" data-v="-1" aria-label="less">−</button><span>${st[k]}</span><button type="button" data-k="${k}" data-v="1" aria-label="more">+</button></span>`;
+ const render=()=>{const{a,b,c,d,step}=st,S=300,L=46,T=40,cw=S/b,rh=S/d,F='font-family="Lexend,sans-serif"';
+  let g=`<svg class="am" viewBox="0 0 ${L+S+12} ${T+S+12}" role="img" aria-label="area model for ${a}/${b} times ${c}/${d}">`;
+  // small pieces
+  for(let r=0;r<d;r++)for(let q=0;q<b;q++){const inA=q<a,inB=r<c,both=inA&&inB&&step>=3;
+    const showB=step>=2&&inB;const fill=both?'#7c3aed':inA&&showB?'#86efac':inA?'#99f6e4':showB?'#fde68a':'#fff';
+    g+=`<rect x="${L+q*cw}" y="${T+r*rh}" width="${cw}" height="${rh}" fill="${fill}" stroke="#94a3b8" stroke-width="1"/>`}
+  // strong outlines for the two cuts
+  for(let q=0;q<=b;q++)g+=`<line x1="${L+q*cw}" y1="${T}" x2="${L+q*cw}" y2="${T+S}" stroke="#0f766e" stroke-width="${q===0||q===b?2.5:1.8}"/>`;
+  if(step>=2)for(let r=0;r<=d;r++)g+=`<line x1="${L}" y1="${T+r*rh}" x2="${L+S}" y2="${T+r*rh}" stroke="#b45309" stroke-width="${r===0||r===d?2.5:1.8}"/>`;
+  g+=`<rect x="${L}" y="${T}" width="${S}" height="${S}" fill="none" stroke="#0f172a" stroke-width="2.5"/>`;
+  // brackets / labels
+  if(a>0)g+=`<path d="M${L} ${T-8} v-8 h${a*cw} v8" fill="none" stroke="#0f766e" stroke-width="2.5"/><text x="${L+a*cw/2}" y="${T-21}" text-anchor="middle" font-size="16" font-weight="700" fill="#0f766e" ${F}>${a}/${b}</text>`;
+  if(step>=2&&c>0)g+=`<path d="M${L-8} ${T} h-8 v${c*rh} h8" fill="none" stroke="#b45309" stroke-width="2.5"/><text x="${L-20}" y="${T+c*rh/2}" text-anchor="middle" font-size="16" font-weight="700" fill="#b45309" ${F} transform="rotate(-90 ${L-20} ${T+c*rh/2})">${c}/${d}</text>`;
+  g+='</svg>';
+  const n=a*c,m=b*d,[sn,sd]=simp(n,m);
+  const lines=[`<span style="color:#0f766e">Cut the square into <b>${b}</b> columns and shade <b>${a}</b>: that's ${fr(a,b)}.</span>`,
+   `<span style="color:#b45309">Cut it into <b>${d}</b> rows and take <b>${c}</b> of them: ${fr(c,d)} of the shaded part.</span>`,
+   `<span style="color:#6d28d9">Now there are ${b} × ${d} = <b>${m}</b> small pieces. The overlap has ${a} × ${c} = <b>${n}</b>.</span>`];
+  el.innerHTML=`<div class="ctrl"><span class="amf"><b style="color:#0f766e">A</b> ${stepper('a')} <b>/</b> ${stepper('b')}</span><b>×</b><span class="amf"><b style="color:#b45309">B</b> ${stepper('c')} <b>/</b> ${stepper('d')}</span></div>
+   <div class="amwrap">${g}<div class="amside"><div class="amsteps">${[1,2,3].map(i=>`<button type="button" class="btn ${st.step===i?'':'ghost'} amst" data-s="${i}">Step ${i}</button>`).join('')}</div>
+   <ol class="amlist">${lines.slice(0,step).map(x=>`<li>${x}</li>`).join('')}</ol></div></div>
+   <div class="cmp" aria-live="polite">${step>=3?`${fr(a,b)} × ${fr(c,d)} = ${fr(n,m)}${sd!==m&&n?` = ${sd===1?sn:fr(sn,sd)}`:''}`:'<span class="small" style="font-weight:400">Go to Step 3 to see the answer.</span>'}</div>
+   ${step>=3?`<p class="small">Top × top = ${n}, bottom × bottom = ${m}.${sd!==m&&n?` Then simplify (÷ ${m/sd}).`:''}</p>`:''}`;
+  $$('.step button',el).forEach(bt=>bt.onclick=()=>{const k=bt.dataset.k,v=st[k]+Number(bt.dataset.v);
+    if(k==='b'||k==='d'){if(v<1||v>10)return;st[k]=v;const nk=k==='b'?'a':'c';if(st[nk]>v)st[nk]=v}else{const dk=k==='a'?'b':'d';if(v<0||v>st[dk])return;st[k]=v}render()});
+  $$('.amst',el).forEach(bt=>bt.onclick=()=>{st.step=+bt.dataset.s;render()})};render()}
 function comparer(el){const st={a:2,b:3,c:3,d:4,same:false};
  const bar=(n,d,L,col)=>{const W=600,H=46;let s=`<svg viewBox="0 0 ${W+4} ${H+4}" role="img" aria-label="${n} out of ${d}">`;const pieces=st.same?L:d,per=st.same?L/d:1;
   for(let i=0;i<pieces;i++){const filled=i<n*per;s+=`<rect x="${2+i*W/pieces}" y="2" width="${W/pieces}" height="${H}" fill="${filled?col:'#fff'}" stroke="#374151" stroke-width="${st.same?0.6:1.6}"/>`}
@@ -508,7 +545,7 @@ chipPanel($('#pchips'),$('#ppanel'),{
  r1:{label:'Rounding: decimal places',gen:rounding},r2:{label:'Rounding: significant figures',gen:sigfig},hl:{label:'HCF and LCM',gen:hcflcm},
  eq:{label:'Equivalent fractions',gen:equiv},si:{label:'Simplifying',gen:simplify},cd:{label:'Lowest common denominator',gen:lcd},
  cp:{label:'Which is bigger?',gen:compare},or:{label:'Ordering',gen:order},as:{label:'Adding and subtracting',gen:addsub()}});
-comparer($('#cmp'));wall($('#wall'));
+areaModel($('#area'));comparer($('#cmp'));wall($('#wall'));
 quiz($('#quiz'),()=>[rounding,rounding,sigfig,sigfig,simplify,lcd,compare,order,addsub('+'),addsub('+','other'),addsub('−','other')],
  '11 questions, one try each. <b>No calculator!</b>');
 tabs();
