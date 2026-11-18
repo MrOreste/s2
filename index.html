@@ -2,7 +2,14 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>S2 Maths with Mr Oreste</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0B3B3A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="S2 Maths">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>:root{--teal:#0f766e;--teal2:#14b8a6;--tealbg:#e6f6f4;--amber:#b45309;--amber2:#f59e0b;--amberbg:#fef3c7;--ink:#1f2937;--mute:#6b7280;--line:#e5e7eb;--bg:#f5f8f8;--good:#15803d;--goodbg:#dcfce7;--bad:#b91c1c;--badbg:#fee2e2}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -308,14 +315,118 @@ label.tog{display:inline-flex;gap:8px;align-items:center;font-size:.95rem;cursor
 .fj .flyb{min-width:64px;font-size:1.05rem;border-color:#a16207;color:#713f12}
 .fj .nextb{background:#16a34a;box-shadow:0 3px 0 #166534;font-size:1.05rem;padding:10px 24px}
 .fj .fjmsg{text-align:center;min-height:2.8em;padding:2px 14px 14px;font-size:1.1rem;color:var(--ink)}
+
+/* ===== restyle: map home, menus, pop-ups ===== */
+:root{--hd1:#0B3B3A;--hd2:#0B3B3A;--sky:#0B3B3A;--node:#0D9488;--soft:#C6EDE7}
+body{font-family:Fredoka,Lexend,system-ui,-apple-system,sans-serif}
+body.noscroll{overflow:hidden}
+header.top{padding:0}
+.topin{max-width:1160px;margin:0 auto;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;color:#fff;text-decoration:none}
+.brand .logo{width:44px;height:44px;border-radius:14px;background:#fff;color:var(--sky);display:grid;place-items:center;font-weight:700;font-size:1.15rem;flex:none}
+.brand b{display:block;font-size:1.45rem;line-height:1.1;font-weight:700}
+.brand small{display:block;font-size:.8rem;color:var(--soft)}
+nav.tabs{display:flex;gap:4px;overflow:visible}
+nav.tabs a{display:flex;align-items:center;gap:8px;text-decoration:none;font-weight:500;opacity:1;white-space:nowrap;position:relative}
+nav.tabs .badge{font-size:.72rem;font-weight:600;background:#FFC83D;color:#3B2600;border-radius:99px;padding:1px 8px}
+@media(min-width:760px){
+ nav.tabs{padding:5px;border-radius:999px;background:rgba(255,255,255,.1)}
+ nav.tabs a{color:#fff;padding:9px 16px;border-radius:999px;font-size:1rem}
+ nav.tabs a.on{background:#fff;color:var(--sky);font-weight:600}
+ nav.tabs a .ic{display:contents}
+}
+@media(max-width:759.98px){
+ .topin{padding:12px 16px}
+ .brand .logo{width:38px;height:38px;border-radius:12px;font-size:1rem}
+ .brand b{font-size:1.25rem}
+ nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;background:#fff;border-top:1px solid var(--line);justify-content:space-around;gap:0;padding:6px 2px calc(8px + env(safe-area-inset-bottom))}
+ nav.tabs a{flex:1 1 0;flex-direction:column;gap:2px;color:#4a4560;font-size:.72rem;padding:2px 0;border-radius:0;background:none}
+ nav.tabs a .ic{width:52px;height:30px;border-radius:15px;display:grid;place-items:center}
+ nav.tabs a.on{color:var(--teal);font-weight:600;background:none}
+ nav.tabs a.on .ic{background:var(--tealbg)}
+ nav.tabs .badge{position:absolute;top:0;left:calc(50% + 12px);width:10px;height:10px;padding:0;font-size:0;background:#E8590C;border:2px solid #fff}
+ body{padding-bottom:84px}
+ footer{padding-bottom:20px}
+}
+/* map */
+#map{margin:0}
+.mapsky{background:var(--sky);color:#fff;min-height:calc(100vh - 150px);padding-bottom:30px}
+.mapin{position:relative;max-width:1160px;margin:0 auto}
+.mapin svg.path{position:absolute;left:0;top:0;width:100%;max-width:none;pointer-events:none}
+.maphint{text-align:center;margin:0;padding:6px 16px 0}
+.maphint span{display:inline-block;padding:8px 16px;border-radius:99px;background:rgba(255,255,255,.14);font-size:.9rem}
+.mglyph{position:absolute;font-size:3.4rem;opacity:.09;pointer-events:none;font-family:Georgia,serif}
+.stop{position:absolute;display:flex;align-items:center;gap:14px;border:0;background:none;color:#fff;font:inherit;cursor:pointer;padding:0;text-align:left}
+.stop.r{flex-direction:row-reverse;text-align:right}
+.stop .dot{flex:none;border-radius:50%;display:grid;place-items:center;font-weight:700;box-sizing:border-box}
+.stop .dot>*{display:block}
+.stop.done .dot{background:#FFC83D;color:#3B2600;border:3px solid #FFE7A3}
+.stop.cur .dot{background:var(--node);color:#fff;border:5px solid #fff;box-shadow:0 0 0 10px rgba(255,255,255,.15),0 0 30px rgba(255,200,61,.55)}
+.stop.soon .dot{background:rgba(255,255,255,.08);color:var(--soft);border:3px dashed rgba(255,255,255,.45)}
+.stop.chk .dot{border-radius:12px;transform:rotate(45deg)}
+.stop.chk .dot>*{transform:rotate(-45deg)}
+.stop.chk.up .dot{background:#FFC83D;border:3px solid #FFE7A3;color:#3B2600}
+.stop.chk.past .dot{background:rgba(255,255,255,.06);border:3px solid #FFC83D;color:#FFC83D}
+.stop .lb{display:flex;flex-direction:column;max-width:min(250px,42vw)}
+.stop .lb small{color:var(--soft);font-size:.85rem}
+.stop .lb b{font-weight:600;font-size:1.05rem;line-height:1.2}
+.stop.cur .lb b{font-size:1.2rem}
+.stop:disabled{cursor:default}
+.stop:not(:disabled):hover .dot{filter:brightness(1.08)}
+.stop:focus-visible{outline:3px solid #FFC83D;outline-offset:6px;border-radius:14px}
+/* pop-up windows: bottom sheet on phones, centred window on laptops */
+.pop{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center}
+.popbg{position:absolute;inset:0;background:rgba(10,5,30,.55);animation:fadein .2s}
+.popcard{position:relative;background:#fff;color:var(--ink);width:100%;max-height:84vh;overflow:auto;border-radius:24px 24px 0 0;padding:12px 18px calc(22px + env(safe-area-inset-bottom));box-sizing:border-box;animation:slideup .25s ease-out}
+.popcard::before{content:'';display:block;width:40px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 10px}
+.popx{position:absolute;right:14px;top:14px;width:44px;height:44px;border-radius:50%;border:0;background:var(--tealbg);color:var(--ink);display:grid;place-items:center;cursor:pointer}
+.pophead{padding-right:52px;margin-bottom:12px}
+.pophead small{display:block;color:var(--mute);font-size:.9rem}
+.pophead h2{color:var(--ink);font-size:1.5rem;line-height:1.15;margin:0}
+.popacts{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 8px}
+.pcard{flex:1 1 230px;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;text-decoration:none;font:inherit}
+.pcard .pi{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none}
+.pcard b{display:block;font-weight:600}
+.pcard small{display:block;font-size:.85rem}
+.pcard.chkc{background:#FFF3D6;color:#4A2F00}.pcard.chkc .pi{background:#FFC83D;color:#3B2600}
+.pcard.prac{background:var(--teal);color:#fff}.pcard.prac .pi{background:rgba(255,255,255,.18)}.pcard.prac small{opacity:.85}
+.soonbox{margin:10px 0 4px;padding:16px;border:2px dashed var(--line);border-radius:14px;text-align:center;color:var(--mute)}
+.ckbig{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.ckbig .pi{width:52px;height:52px;border-radius:14px;display:grid;place-items:center}
+@media(min-width:760px){
+ .pop{align-items:center;padding:24px}
+ .popcard{max-width:680px;border-radius:26px;padding:26px 28px;max-height:86vh;animation:zoomin .2s ease-out;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+ .popcard::before{display:none}
+ .popcard.small{max-width:460px}
+ .pophead h2{font-size:1.8rem}
+}
+@keyframes slideup{from{transform:translateY(40%);opacity:.4}to{transform:none;opacity:1}}
+@keyframes zoomin{from{transform:scale(.94);opacity:0}to{transform:none;opacity:1}}
+@keyframes fadein{from{opacity:0}}
+@media(prefers-reduced-motion:reduce){.popcard,.popbg{animation:none}}
+/* sheets grouped by block */
+h4.blk{font-size:1.1rem;margin:1.4rem 0 .1rem;color:var(--ink)}
+h4.blk:first-child{margin-top:.6rem}
+/* game folders */
+h3.gfold{display:flex;align-items:center;gap:8px;font-size:.85rem;margin:1.1rem 0 .5rem}
+h3.gfold:first-child{margin-top:.4rem}
+/* Play | Explore switch */
+.seg{display:flex;padding:4px;border-radius:14px;background:var(--tealbg);margin:0 0 14px}
+.seg a{flex:1;text-align:center;padding:9px 0;border-radius:10px;text-decoration:none;color:var(--ink);font-weight:600}
+.seg a.on{background:#fff;color:var(--teal);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+/* test prep: coming soon */
+.nextck{background:var(--sky);color:#fff;border-radius:16px;padding:16px 18px;margin-bottom:14px}
+.nextck small{display:block;color:var(--soft)}
+.nextck b{display:block;font-size:1.35rem}
+.nextck span{color:var(--soft)}
 </style>
 </head><body>
-<header><div class="wrap"><h1>S2 Maths<span class="by">Oreste Campagner · Tallinn European School</span></h1>
-<nav><a href="#sheets">Sheets</a><a href="#practice">Practice</a><a href="#games">Games</a><a href="#explore">Explore</a><a href="#test">Test prep</a></nav></div></header>
+<header class="top"><div class="topin"><a class="brand" href="#map"><span class="logo">S2</span><span><b>S2 Maths</b><small>Oreste Campagner · Tallinn European School</small></span></a><nav class="tabs" aria-label="Main"><a href="#map" data-v="map"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15M15 6v15"/></svg></span><span>Map</span></a><a href="#sheets" data-v="sheets"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M9 13h6M9 17h4"/></svg></span><span>Sheets</span></a><a href="#practice" data-v="practice"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16zM14 6l3 3"/></svg></span><span>Practice</span></a><a href="#games" data-v="games explore"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9h12a3 3 0 0 1 3 3v3a3 3 0 0 1-5 2l-1-1H9l-1 1a3 3 0 0 1-5-2v-3a3 3 0 0 1 3-3zM8 12v3M6.5 13.5h3M15 13h.01M17 14.5h.01"/></svg></span><span>Games</span></a><a href="#test" data-v="test"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg></span><span>Test prep</span><span class="badge">27 Nov</span></a></nav></div></header>
+<section id="map" class="view"><div class="mapsky"><div class="mapin" id="mapin"></div><p class="maphint"><span>Choose a stop to open it</span></p></div></section>
+<div id="pop" class="pop" hidden><div class="popbg" data-close></div><div class="popcard" role="dialog" aria-modal="true" aria-labelledby="poptitle"><button type="button" class="popx" data-close aria-label="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><div id="popbody"></div></div></div>
 <main class="wrap">
 
 <section id="sheets" class="view">
-  <div class="banner"><b>Week 12–13:</b> multiplying and dividing fractions, BIDMAS with fractions. <b>Check on Friday 27 November!</b> New sheets and games soon!</div>
   <div class="card"><h2>Worksheets</h2><p class="small">Try the sheet first, then check the answers.</p>
     <div id="w10"></div>
   </div>
@@ -327,17 +438,19 @@ label.tog{display:inline-flex;gap:8px;align-items:center;font-size:.95rem;cursor
 </section>
 
 <section id="games" class="view" hidden>
+  <div class="seg"><a href="#games">Play</a><a href="#explore">Explore</a></div>
   <div class="card"><h2>Games</h2><p class="small">Pick a game!</p><div id="gpick"></div><div id="gpanel" hidden></div></div>
 </section>
 
 <section id="explore" class="view" hidden>
+  <div class="seg"><a href="#games">Play</a><a href="#explore">Explore</a></div>
   <div class="card"><h2>Multiplying fractions: area model</h2><p class="small">Change the fractions. The overlap shows the answer.</p><div id="area"></div></div>
   <div class="card"><h2>Compare two fractions</h2><p class="small">Change the numbers. Which fraction is bigger?</p><div id="cmp"></div></div>
   <div class="card"><h2>Fraction wall</h2><p class="small">Tap a piece to find equal fractions.</p><div id="wall"></div></div>
 </section>
 
 <section id="test" class="view" hidden>
-  <div class="card"><h2>Test prep: rounding and fractions</h2><div id="quiz"></div></div>
+  <div class="card"><div class="nextck"><small>Next check</small><b>Friday 27 November</b><span>Multiplying and dividing fractions, BIDMAS with fractions</span></div><h2>Test prep</h2><p><b>Coming soon!</b> We haven’t covered all the topics yet.</p><p class="small">Until then, try <a href="#practice">Practice</a> and <a href="#games">Games</a>.</p><div id="quiz" hidden></div></div>
 </section>
 </main>
 <footer>S2 Maths with Mr Oreste</footer>
@@ -358,7 +471,7 @@ let userActed=false;
 function numCheck(ans,hint){return v=>{const n=parseNum(v);if(n===null)return{bad:true,msg:'Type a number, for example −12.'};if(n===ans)return{ok:true};return{msg:(hint&&hint(n))||''}}}
 function signHint(ans){return n=>(n===-ans&&ans!==0)?'Check your sign.':''}
 
-function tabs(){const links=$$('nav a');const show=()=>{let h=location.hash.slice(1);if(!links.some(a=>a.getAttribute('href')==='#'+h))h=links[0].getAttribute('href').slice(1);$$('.view').forEach(v=>v.hidden=v.id!==h);links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+h))};addEventListener('hashchange',()=>{show();scrollTo(0,0)});show()}
+function tabs(){const links=$$('nav.tabs a');const views=$$('.view').map(v=>v.id);const show=()=>{let h=location.hash.slice(1);if(!views.includes(h))h='map';$$('.view').forEach(v=>v.hidden=v.id!==h);links.forEach(a=>{const on=(a.dataset.v||'').split(' ').includes(h);a.classList.toggle('on',on);on?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current')});$$('.seg a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+h));document.body.dataset.view=h};addEventListener('hashchange',()=>{show();scrollTo(0,0)});show()}
 
 function scoreBar(el){let right=0,total=0,streak=0;const sc=$('.sc',el),st=$('.st',el);const upd=()=>{sc.textContent=`Score: ${right} / ${total}`;st.textContent=streak>=3?`🔥 ${streak} in a row`:''};upd();return{add(ok){total++;if(ok){right++;streak++}else streak=0;upd()}}}
 
@@ -440,7 +553,7 @@ const SHEETS=[
  [10,'36','Rounding: decimal places','S2_Rounding-decimal-places_L36.pdf','','']];
 const lastL=l=>Math.max(...String(l).split('-').map(Number));
 const weeks=[...new Set(SHEETS.map(x=>x[0]))].sort((a,b)=>b-a);
-$('#w10').innerHTML=weeks.map(w=>`<h3>Week ${w}</h3>`+SHEETS.map((x,i)=>[x,i]).filter(([x])=>x[0]===w).sort(([a,i],[b,j])=>lastL(b[1])-lastL(a[1])||i-j).map(([[,,t,id,ans,tag]])=>`<div class="sheet"><div class="ico">PDF</div><div class="name"><b>${t}${tag?` <span class="tag">${tag}</span>`:''}</b></div><div class="acts"><a class="btn ghost" href="sheets/${id}" target="_blank" rel="noopener">Sheet</a>${ans?`<a class="btn amber" href="sheets/${ans}" target="_blank" rel="noopener">Answers</a>`:''}</div></div>`).join('')).join('');
+/* the sheet list is drawn further down, grouped by block */
 
 /* ---------- rounding ---------- */
 const decStr=(k,e)=>{let s=String(k);if(e>=0)return s+'0'.repeat(e);const d=-e;s=s.padStart(d+1,'0');return s.slice(0,s.length-d)+'.'+s.slice(s.length-d)};
@@ -580,7 +693,7 @@ function later(fn,ms,bag){const id=setTimeout(fn,ms);bag&&bag.push(id);return id
 function gameHub(pickEl,panelEl,games){
   let stop=null;
   const home=()=>{if(stop)stop();stop=null;panelEl.hidden=true;panelEl.innerHTML='';pickEl.hidden=false;
-    pickEl.innerHTML=`<div class="gpick">${Object.entries(games).map(([k,g])=>{const b=GK.best(k);return`<button type="button" class="gcard ${g.cls}" data-k="${k}">${b?`<span class="best">Best ${b}</span>`:''}<div class="emo">${g.emo}</div><b>${g.title}</b><span>${g.desc}</span></button>`}).join('')}</div>`};
+    const card=([k,g])=>{const b=GK.best(k);return`<button type="button" class="gcard ${g.cls}" data-k="${k}">${b?`<span class="best">Best ${b}</span>`:''}<div class="emo">${g.emo}</div><b>${g.title}</b><span>${g.desc}</span></button>`};const ent=Object.entries(games);const tops=[...new Set(ent.map(([,g])=>g.topic||''))];pickEl.innerHTML=tops.map(t=>(t?`<h3 class="gfold"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>${t}</h3>`:'')+`<div class="gpick">${ent.filter(([,g])=>(g.topic||'')===t).map(card).join('')}</div>`).join('')};
   pickEl.onclick=e=>{const c=e.target.closest('.gcard');if(!c)return;const k=c.dataset.k,g=games[k];pickEl.hidden=true;panelEl.hidden=false;
     panelEl.innerHTML='<button type="button" class="backbtn">← All games</button><div class="gbody"></div>';$('.backbtn',panelEl).onclick=home;
     stop=g.run($('.gbody',panelEl),k)||null;panelEl.scrollIntoView({block:'start'})};
@@ -945,10 +1058,65 @@ function chocBar(root,key){
 }
 
 gameHub($('#gpick'),$('#gpanel'),{
-  cb:{title:'Chocolate Bar Share',emo:'🍫',desc:'Share a bar: how much of the whole does your friend get?',cls:'g-orange',run:chocBar},
-  fj:{title:'Frog Jumps',emo:'🐸',desc:'Fraction jumps: find the lily pad where the frog lands.',cls:'g-green',run:frogJumps},
-  ps:{title:'The Perfect Slice',emo:'🍞',desc:'Cut an even slice, then round the caliper readings.',cls:'g-red',run:perfectSlice},
-  ff:{title:'Fraction Fill',emo:'🧱',desc:'Drop falling fractions to make exactly 1 whole.',cls:'g-purple',run:fractionFill},
-  ld:{title:'Rounding Lander',emo:'🚀',desc:'Land on the right rounded number before the fuel runs out.',cls:'g-night',run:lander},
-  pz:{title:'Pizza Shop',emo:'🍕',desc:'Serve fraction orders fast for big tips.',cls:'g-orange',run:pizzaShop}});
-</script></body></html>
+  cb:{topic:'Fractions',title:'Chocolate Bar Share',emo:'🍫',desc:'Share a bar: how much of the whole does your friend get?',cls:'g-orange',run:chocBar},
+  fj:{topic:'Fractions',title:'Frog Jumps',emo:'🐸',desc:'Fraction jumps: find the lily pad where the frog lands.',cls:'g-green',run:frogJumps},
+  ps:{topic:'Rounding',title:'The Perfect Slice',emo:'🍞',desc:'Cut an even slice, then round the caliper readings.',cls:'g-red',run:perfectSlice},
+  ff:{topic:'Fractions',title:'Fraction Fill',emo:'🧱',desc:'Drop falling fractions to make exactly 1 whole.',cls:'g-purple',run:fractionFill},
+  ld:{topic:'Rounding',title:'Rounding Lander',emo:'🚀',desc:'Land on the right rounded number before the fuel runs out.',cls:'g-night',run:lander},
+  pz:{topic:'Fractions',title:'Pizza Shop',emo:'🍕',desc:'Serve fraction orders fast for big tips.',cls:'g-orange',run:pizzaShop}});
+</script><script>
+/* ===== map home, pop-up windows, sheets grouped by block ===== */
+const SITE={"blocks": [{"label": "Weeks 12–13", "topic": "Multiplying and dividing fractions, BIDMAS with fractions", "weeks": [12, 13], "current": true, "practice": null, "check": {"name": "Check", "date": "Friday 27 November", "short": "Fri 27 Nov", "done": false}}, {"label": "Weeks 10–11", "topic": "Rounding, HCF, LCM and fractions", "weeks": [10, 11], "practice": "as", "check": {"name": "Fractions Check", "date": "Friday 13 November", "short": "Fri 13 Nov", "done": true}}], "sheetsEl": "#w10"};
+const sheetRow=([,,t,id,ans,tag])=>`<div class="sheet"><div class="ico">PDF</div><div class="name"><b>${t}${tag?` <span class="tag">${tag}</span>`:''}</b></div><div class="acts"><a class="btn ghost" href="sheets/${id}" target="_blank" rel="noopener">Sheet</a>${ans?`<a class="btn amber" href="sheets/${ans}" target="_blank" rel="noopener">Answers</a>`:''}</div></div>`;
+const sheetsFor=w=>SHEETS.map((x,i)=>[x,i]).filter(([x])=>x[0]===w).sort(([a,i],[b,j])=>lastL(b[1])-lastL(a[1])||i-j).map(([x])=>x);
+const weeksHtml=ws=>ws.slice().sort((a,b)=>b-a).filter(w=>sheetsFor(w).length).map(w=>`<h3>Week ${w}</h3>`+sheetsFor(w).map(sheetRow).join('')).join('');
+(()=>{const used=new Set();let h='';
+  SITE.blocks.forEach(b=>{b.weeks.forEach(w=>used.add(w));const inner=weeksHtml(b.weeks);if(inner)h+=`<h4 class="blk">${b.label} · ${b.topic}</h4>`+inner});
+  const rest=[...new Set(SHEETS.map(x=>x[0]))].filter(w=>!used.has(w));if(rest.length)h+=weeksHtml(rest);
+  $(SITE.sheetsEl).innerHTML=h})();
+
+const IC={flag:'M6 21V4M6 4h12l-3 4.5 3 4.5H6',tick:'M20 6L9 17l-5-5',star:'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z',pen:'M4 20l4-1 11-11-3-3L5 16zM14 6l3 3'};
+const ico=(d,s=20,w=2.4,fill='none')=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="${fill}" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
+
+function mapStops(){const out=[{kind:'soon'}];SITE.blocks.forEach((b,i)=>{if(b.check)out.push({kind:'chk',b,i});out.push({kind:'blk',b,i})});return out}
+let mapW=0;
+function drawMap(){const el=$('#mapin');if(!el)return;const W=el.clientWidth;if(!W||W===mapW)return;mapW=W;const wide=W>=700;
+  const XS=wide?[66,50,30,50,70,50,30]:[72,50,27,50,73,50,27];
+  const SZ=wide?{soon:60,chk:52,cur:104,done:80}:{soon:52,chk:44,cur:84,done:62};
+  let y=wide?50:34;const pts=[];let html='';
+  mapStops().forEach((st,k)=>{const x=XS[k%XS.length];let cls,size,mark,small,big,dis=false,act='';
+    if(st.kind==='soon'){cls='soon';size=SZ.soon;mark='?';small='Next';big='Coming soon';dis=true}
+    else if(st.kind==='chk'){const c=st.b.check;cls='chk '+(c.done?'past':'up');size=SZ.chk;mark=c.done?ico(IC.tick,size*.42):ico(IC.flag,size*.46,2,'currentColor');small=c.short;big=c.name;act=`data-chk="${st.i}"`}
+    else{cls=st.b.current?'cur':'done';size=st.b.current?SZ.cur:SZ.done;mark=st.b.current?ico(IC.star,size*.36,2,'currentColor'):ico(IC.tick,size*.4,3);small=st.b.label;big=st.b.topic;act=`data-blk="${st.i}"`}
+    const right=x>55,r=size/2,tx=right?`calc(-100% + ${r}px)`:`-${r}px`;
+    pts.push([x*10,y+r]);
+    html+=`<button type="button" class="stop ${cls}${right?' r':''}" ${act} ${dis?'disabled':''} aria-haspopup="dialog" style="left:${x}%;top:${y+r}px;transform:translate(${tx},-50%)"><span class="dot" style="width:${size}px;height:${size}px;font-size:${Math.round(size*.36)}px"><span>${mark}</span></span><span class="lb"><small>${small}</small><b>${big}</b></span></button>`;
+    y+=size+(wide?72:62)});
+  const H=y+(wide?10:4);let d='M'+pts[0][0]+' '+pts[0][1];
+  for(let k=1;k<pts.length;k++){const my=(pts[k-1][1]+pts[k][1])/2;d+=` C ${pts[k-1][0]} ${my}, ${pts[k][0]} ${my}, ${pts[k][0]} ${pts[k][1]}`}
+  const glyphs=[['π',6,8],['÷',88,30],['√',10,62],['×',86,78],['%',46,4]].map(([g,lx,ty])=>`<span class="mglyph" aria-hidden="true" style="left:${lx}%;top:${ty}%">${g}</span>`).join('');
+  el.style.height=H+'px';
+  el.innerHTML=glyphs+`<svg class="path" style="height:${H}px" height="${H}" viewBox="0 0 1000 ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${d}" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="5" stroke-dasharray="2 14" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`+html}
+
+let popFrom=null;
+function openPop(html,small){const p=$('#pop'),c=$('.popcard',p);$('#popbody').innerHTML=html;c.classList.toggle('small',!!small);popFrom=document.activeElement;p.hidden=false;document.body.classList.add('noscroll');$('.popx',p).focus()}
+function closePop(){const p=$('#pop');if(p.hidden)return;p.hidden=true;document.body.classList.remove('noscroll');if(popFrom&&popFrom.focus)popFrom.focus()}
+function openBlock(i){const b=SITE.blocks[i],c=b.check;const list=weeksHtml(b.weeks);
+  const ck=c?(c.done?`<div class="pcard chkc"><span class="pi">${ico(IC.tick)}</span><span><b>${c.name} · ${c.date}</b><small>Done</small></span></div>`
+    :`<a class="pcard chkc" href="#test"><span class="pi">${ico(IC.flag)}</span><span><b>${c.name} · ${c.date}</b><small>Test prep: coming soon</small></span></a>`):'';
+  const pr=b.practice?`<a class="pcard prac" href="#practice" data-chip="${b.practice}"><span class="pi">${ico(IC.pen)}</span><span><b>Practise these topics</b><small>New questions every time</small></span></a>`:'';
+  openPop(`<div class="pophead"><small>${b.label}</small><h2 id="poptitle">${b.topic}</h2></div>${ck||pr?`<div class="popacts">${ck}${pr}</div>`:''}${list||'<p class="soonbox">New sheets coming soon</p>'}`)}
+function openCheck(i){const b=SITE.blocks[i],c=b.check;
+  openPop(`<div class="ckbig"><span class="pi" style="background:${c.done?'var(--goodbg)':'#FFC83D'};color:${c.done?'var(--good)':'#3B2600'}">${ico(c.done?IC.tick:IC.flag,26)}</span><small class="small">${c.done?'Done':'Coming up'}</small><h2 id="poptitle" style="color:var(--ink);margin:0">${c.name} · ${c.date}</h2><p class="small" style="font-size:1rem">${b.topic}</p>${c.done?'':'<a class="btn" href="#test">Test prep</a>'}</div>`,true)}
+
+$('#mapin').addEventListener('click',e=>{const t=e.target.closest('.stop');if(!t||t.disabled)return;if(t.dataset.blk)openBlock(+t.dataset.blk);else if(t.dataset.chk)openCheck(+t.dataset.chk)});
+$('#pop').addEventListener('click',e=>{if(e.target.closest('[data-close]')){closePop();return}
+  const a=e.target.closest('a[href^="#"]');if(a){const chip=a.dataset.chip;closePop();if(chip)setTimeout(()=>{const c=$(`#pchips .chip[data-k="${chip}"]`);if(c)c.click()},0)}});
+addEventListener('keydown',e=>{if(e.key==='Escape')closePop()});
+addEventListener('hashchange',()=>{closePop();if(location.hash==='#map'||!location.hash){mapW=0;drawMap()}});
+let rsz;addEventListener('resize',()=>{clearTimeout(rsz);rsz=setTimeout(drawMap,120)});
+drawMap();
+if(!location.hash||location.hash==='#map'){const ci=SITE.blocks.findIndex(b=>b.current);if(ci>=0)openBlock(ci)}
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
+</body></html>
